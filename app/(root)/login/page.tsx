@@ -6,10 +6,12 @@ import { useForm } from "react-hook-form"
 import type { FieldValues } from "react-hook-form"
 import axios from "axios"
 import { useRouter } from "next/navigation"
+import { useUser } from "@/context/UserContext"
 
 const Page = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [apiError, setApiError] = useState({ status: false, message: "" })
+  const { refreshSession, setUser } = useUser()
   const router = useRouter()
   const {
     register,
@@ -24,6 +26,9 @@ const Page = () => {
   async function onSubmit(data: FieldValues) {
     try {
       const res = await axios.post("/api/users/login", data)
+      if (res.status === 200) {
+        refreshSession()
+      }
       console.log("res", res)
       reset()
       router.push("/")
