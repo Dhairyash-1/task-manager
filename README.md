@@ -24,7 +24,7 @@ This is a task manager application built using Next.js 14+ with TypeScript. The 
 
 ## Live Demo
 
-Check out the live demo of the project [here](https://task-manager-cuy6zfkki-dhairyash1s-projects.vercel.app/).
+Check out the live demo of the project [here](https://task-manager-inky-beta.vercel.app/).
 
 ## Getting Started
 
