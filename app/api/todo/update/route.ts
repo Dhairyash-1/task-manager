@@ -3,7 +3,7 @@ import { authMiddleware, AuthenticatedRequest } from "@/lib/authMiddleware"
 import Todo from "@/models/todo.model"
 import { NextRequest, NextResponse } from "next/server"
 
-export async function handler(request: AuthenticatedRequest) {
+async function handler(request: AuthenticatedRequest) {
   try {
     // Connect to the database
     await connectDB()

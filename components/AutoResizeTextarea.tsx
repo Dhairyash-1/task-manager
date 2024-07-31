@@ -28,7 +28,7 @@ const AutoResizeTextarea = ({
     }
   }, [text, minHeight])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
     if (onChange) onChange(e)
   }

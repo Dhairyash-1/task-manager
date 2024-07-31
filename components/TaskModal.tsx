@@ -138,6 +138,30 @@ const TaskModal: React.FC<TaskModalProps> = ({
       setIsLoading(false)
     }
   }
+  async function deleteTodoApi(id: string) {
+    try {
+      setIsLoading(true)
+      const res = await axios.delete(`/api/todo/delete?id=${id}`)
+      if (res.status === 200) {
+        const allTodo = await fetchTodos()
+        setTasks(allTodo)
+        setTodoData({
+          title: "",
+          description: "",
+          status: defaultStatus,
+          priority: "",
+          deadline: "",
+          content: "",
+        })
+        onClose()
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
       <div
@@ -180,7 +204,16 @@ const TaskModal: React.FC<TaskModalProps> = ({
                   onClick={mode === "create" ? createTodoApi : updateTodoApi}
                 />
                 <Button icon="/share.png" label="Share" />
-                <Button icon="/star.png" label="Favourite" />
+                {/* <Button icon="/star.png" label="Favourite" /> */}
+                <Button
+                  icon=""
+                  onClick={() => {
+                    if (modalTaskId !== null) {
+                      deleteTodoApi(modalTaskId)
+                    }
+                  }}
+                  label="Delete"
+                />
               </div>
             </div>
 

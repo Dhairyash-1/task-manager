@@ -16,7 +16,6 @@ const SideBar = () => {
   const { openModal } = useModal()
   const { user, loading, setUser, refreshSession } = useUser()
 
-  if (loading) return
   console.log("user", user)
   async function handleLogout() {
     try {
@@ -44,7 +43,7 @@ const SideBar = () => {
             className="rounded-full"
           />
           <h2 className="text-[#080808] font-medium text-xl line-clamp-1">
-            {user?.user.fullName}
+            {loading ? "Loading..." : user && user.fullName}
           </h2>
         </div>
         <div className="flex justify-between items-center mt-2">

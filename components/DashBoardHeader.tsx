@@ -8,14 +8,12 @@ import { useUser } from "@/context/UserContext"
 
 const DashBoardHeader = () => {
   const { loading, user } = useUser()
-  if (loading) {
-    return
-  }
+
   return (
     <div className="">
       <div className="flex justify-between items-center w-full">
         <h1 className="text-5xl font-semibold ">
-          Good morning, {user?.user.fullName}!
+          Good morning, {loading ? "Loading..." : user && user.fullName}!
         </h1>
         <Link href={"/help"} className="flex gap-2 items-center">
           Help & feedback

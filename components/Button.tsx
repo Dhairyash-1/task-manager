@@ -1,10 +1,10 @@
 import Image from "next/image"
-import React from "react"
+import React, { MouseEventHandler } from "react"
 interface inputProp {
   label?: string
   icon: string
   bgColor?: string
-  onClick?: Function
+  onClick?: MouseEventHandler<HTMLDivElement>
 }
 const Button = ({ label, icon, bgColor, onClick }: inputProp) => {
   return (

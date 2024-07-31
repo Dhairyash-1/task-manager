@@ -8,7 +8,7 @@ import React, {
   ReactNode,
 } from "react"
 
-interface User {
+export interface User {
   userId: string
   fullName: string
   email: string
@@ -33,7 +33,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       const response = await fetch("/api/users/verify")
       if (response.ok) {
         const userData = await response.json()
-        setUser(userData)
+        setUser(userData.user)
       } else {
         setUser(null)
       }

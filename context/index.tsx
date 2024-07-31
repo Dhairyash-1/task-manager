@@ -1,5 +1,4 @@
 "use client"
-
 import React, {
   createContext,
   useContext,
@@ -35,7 +34,7 @@ interface ModalContextType {
   openDialog: () => void
   closeDialog: () => void
   isDialogOpen: boolean
-  setModalTaskId: (id: string) => void
+  setModalTaskId: Dispatch<SetStateAction<string | null>>
   tasks: TTodo[]
   setTasks: Dispatch<SetStateAction<TTodo[]>>
   defaultStatus: string
@@ -56,10 +55,10 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
 
   const [modalTaskId, setModalTaskId] = useState<string | null>(null)
   const [tasks, setTasks] = useState<TTodo[]>([])
-  const [modalMode, setModalMode] = useState("create")
+  const [modalMode, setModalMode] = useState<"create" | "edit">("create")
   const [defaultStatus, setDefaultStatus] = useState("")
 
-  const openModal = (mode: "create" | "edit", taskId = null) => {
+  const openModal = (mode: "create" | "edit", taskId: string | null) => {
     setModalMode(mode)
     setModalTaskId(taskId)
     setIsModalOpen(true)
@@ -70,11 +69,9 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
     setModalMode("create")
     setModalTaskId(null)
   }
-  // const openModal = () => setIsModalOpen(true)
-  // const closeModal = () => setIsModalOpen(false)
+
   const openDialog = () => setIsDialogOpen(true)
   const closeDialog = () => setIsDialogOpen(false)
-  // const updateModalTaskId = (id: string) => setModalTaskId(id)
 
   return (
     <ModalContext.Provider
@@ -84,6 +81,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
         openModal,
         closeModal,
         modalMode,
+        setModalMode,
         openDialog,
         closeDialog,
         isDialogOpen,
@@ -91,6 +89,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
         setTasks,
         defaultStatus,
         setDefaultStatus,
+        setModalTaskId,
       }}
     >
       {children}
