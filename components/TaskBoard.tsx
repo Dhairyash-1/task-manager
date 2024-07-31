@@ -27,13 +27,20 @@ interface Task {
 const TaskBoard = () => {
   // const [tasks, setTasks] = useState<Task[]>([])
   const { tasks, setTasks } = useModal()
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     async function fetch() {
       const todos = await fetchTodos()
       setTasks(todos)
     }
-    fetch()
+    try {
+      fetch()
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
   }, [])
 
   async function handleDrop(id: string, newStatus: string) {
@@ -55,35 +62,45 @@ const TaskBoard = () => {
     <>
       <TaskActionBar />
       <DndProvider backend={HTML5Backend}>
-        <div className="bg-white rounded-md p-4 flex gap-4 items-start">
-          <Column status="todo" onDrop={handleDrop}>
-            {tasks
-              .filter((task) => task.status === "todo")
-              .map((task, i) => (
-                <TaskItemCard key={i} task={task} />
-              ))}
-          </Column>
-          <Column status="inprogress" onDrop={handleDrop}>
-            {tasks
-              .filter((task) => task.status === "inprogress")
-              .map((task, i) => (
-                <TaskItemCard key={i} task={task} />
-              ))}
-          </Column>
-          <Column status="inreview" onDrop={handleDrop}>
-            {tasks
-              .filter((task) => task.status === "inreview")
-              .map((task, i) => (
-                <TaskItemCard key={i} task={task} />
-              ))}
-          </Column>
-          <Column status="finished" onDrop={handleDrop}>
-            {tasks
-              .filter((task) => task.status === "finished")
-              .map((task, i) => (
-                <TaskItemCard key={i} task={task} />
-              ))}
-          </Column>
+        <div
+          className={`bg-white rounded-md p-4 flex gap-4 ${
+            isLoading ? "items-center justify-center" : "items-start"
+          } `}
+        >
+          {isLoading ? (
+            "Loading..."
+          ) : (
+            <>
+              <Column status="todo" onDrop={handleDrop}>
+                {tasks
+                  .filter((task) => task.status === "todo")
+                  .map((task, i) => (
+                    <TaskItemCard key={i} task={task} />
+                  ))}
+              </Column>
+              <Column status="inprogress" onDrop={handleDrop}>
+                {tasks
+                  .filter((task) => task.status === "inprogress")
+                  .map((task, i) => (
+                    <TaskItemCard key={i} task={task} />
+                  ))}
+              </Column>
+              <Column status="inreview" onDrop={handleDrop}>
+                {tasks
+                  .filter((task) => task.status === "inreview")
+                  .map((task, i) => (
+                    <TaskItemCard key={i} task={task} />
+                  ))}
+              </Column>
+              <Column status="finished" onDrop={handleDrop}>
+                {tasks
+                  .filter((task) => task.status === "finished")
+                  .map((task, i) => (
+                    <TaskItemCard key={i} task={task} />
+                  ))}
+              </Column>
+            </>
+          )}
         </div>
       </DndProvider>
     </>

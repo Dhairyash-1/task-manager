@@ -30,8 +30,8 @@ const Page = () => {
         refreshSession()
       }
       console.log("res", res)
-      reset()
       router.push("/")
+      reset()
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
         const errorMessage =
