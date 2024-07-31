@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next.js Task Manager
+
+This is a task manager application built using Next.js 14+ with TypeScript. The application allows users to create, edit, and manage tasks with different statuses, priorities, and deadlines. It also supports drag-and-drop functionality to move tasks between four columns: To Do, In Progress, In Review, and Finished.
+
+## Features
+
+- Create, edit, and delete tasks
+- Assign statuses to tasks (To Do, In Progress, In Review, Finished)
+- Set task priorities (Urgent, Medium, Low)
+- Set deadlines for tasks
+- Drag and drop tasks between columns
+
+## Tech Stack
+
+- Next.js 14+
+- TypeScript
+- React
+- Tailwind CSS
+- Axios
+
+## Screenshots
+
+![Screenshot 1](https://i.imgur.com/uHRwOIK.png)
+
+## Live Demo
+
+Check out the live demo of the project [here](https://task-manager-cuy6zfkki-dhairyash1s-projects.vercel.app/).
 
 ## Getting Started
 
-First, run the development server:
+Follow the steps below to clone the repository and run the project locally.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Node.js (version 14 or later)
+- npm or yarn
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Installation
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+1. **Clone the repository**
 
-## Learn More
+   ```bash
+   git clone https://github.com/your-username/task-manager.git
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Navigate to the project directory**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   cd task-manager
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+3. **Install dependencies**
 
-## Deploy on Vercel
+   Using npm:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+   Using yarn:
+
+   ```bash
+   yarn install
+   ```
+
+### Running the Project
+
+1. **Start the development server**
+
+   Using npm:
+
+   ```bash
+   npm run dev
+   ```
+
+   Using yarn:
+
+   ```bash
+   yarn dev
+   ```
+
+2. **Open the application in your browser**
+
+   The application should now be running at `http://localhost:3000`.
+
+## Contributing
+
+If you would like to contribute to this project, please fork the repository and create a pull request with your changes. Contributions are welcome!
+
+## Acknowledgements
+
+- [Next.js](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [React](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+---
+
+Feel free to customize this README file as needed for your project. If you have any questions or need further assistance, please open an issue in the repository.
