@@ -63,6 +63,16 @@ Follow the steps below to clone the repository and run the project locally.
    yarn install
    ```
 
+4. **Set up environment variables**
+
+   Copy the `.env.sample` file to `.env` and fill in your MongoDB URI and token secret:
+
+   ```bash
+   cp .env.sample .env
+   ```
+
+   Edit the `.env` file and add your `MONGODB_URI` and `TOKEN_SECRET` values.
+
 ### Running the Project
 
 1. **Start the development server**
