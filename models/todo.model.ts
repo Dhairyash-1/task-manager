@@ -31,6 +31,7 @@ const todoSchema: Schema = new Schema(
     },
     deadline: {
       type: Date,
+      default: null,
     },
     owner: {
       type: String,

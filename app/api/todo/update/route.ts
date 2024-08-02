@@ -34,7 +34,7 @@ async function handler(request: AuthenticatedRequest) {
 
     if (task.owner.toString() !== ownerId?.toString()) {
       return NextResponse.json(
-        { error: "Only owner can update task" },
+        { error: "Only owner can update todo" },
         { status: 429 }
       )
     }
@@ -43,10 +43,10 @@ async function handler(request: AuthenticatedRequest) {
     task.title = title ?? task.title
     task.status = status ?? task.status
     task.priority = priority ?? task.priority
-    task.deadline = deadline ?? task.deadline
+    task.deadline = deadline ? new Date(deadline) : null
     task.description = description ?? task.description
 
-    await task.save() // Save the updated task
+    await task.save()
 
     return NextResponse.json({ success: true, task }, { status: 200 })
   } catch (error) {

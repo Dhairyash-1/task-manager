@@ -4,22 +4,19 @@ import Link from "next/link"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import type { FieldValues } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { SignUpSchema } from "@/utils/validation"
-import * as z from "zod"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 
 const Page = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [apiError, setApiError] = useState({ status: false, message: "" })
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const {
     register,
     reset,
     handleSubmit,
     formState: { errors, isSubmitting },
-    getValues,
   } = useForm()
 
   const togglePasswordVisibility = () => {
@@ -27,6 +24,7 @@ const Page = () => {
   }
   async function onSubmit(data: FieldValues) {
     try {
+      setIsLoading(true)
       const res = await axios.post("/api/users/signup", data)
       reset()
       router.push("/login")
@@ -39,6 +37,8 @@ const Page = () => {
       } else {
         setApiError({ status: true, message: "An unexpected error occurred." })
       }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -133,7 +133,7 @@ const Page = () => {
               className="w-full blue-gradient opacity-65  text-white py-3 mt-6 rounded-md shadow-lg hover:opacity-90 transition duration-300"
               disabled={isSubmitting}
             >
-              Sign Up
+              {isLoading ? "Creating..." : "Sign Up"}
             </button>
           </div>
           {apiError.status && (

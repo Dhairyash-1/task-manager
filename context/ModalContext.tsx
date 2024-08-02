@@ -8,25 +8,10 @@ import React, {
   SetStateAction,
 } from "react"
 
-interface TTodo {
-  _id: string
-  title: string
-  status: string
-  description: string
-  deadline: string
-  priority: string
-  createdAt: string
-  updatedAt: string
-}
-
-interface TStatus {
-  status: "todo" | "inprogress" | "inreview" | "finished" | undefined
-}
-
-// Define the context type
 interface ModalContextType {
   isModalOpen: boolean
   modalTaskId: string | null
+  setModalTaskId: Dispatch<SetStateAction<string | null>>
   modalMode: "create" | "edit"
   setModalMode: Dispatch<SetStateAction<"create" | "edit">>
   openModal: (mode: "create" | "edit", taskId: string | null) => void
@@ -34,17 +19,22 @@ interface ModalContextType {
   openDialog: () => void
   closeDialog: () => void
   isDialogOpen: boolean
-  setModalTaskId: Dispatch<SetStateAction<string | null>>
-  tasks: TTodo[]
-  setTasks: Dispatch<SetStateAction<TTodo[]>>
-  defaultStatus: string
-  setDefaultStatus: Dispatch<SetStateAction<string>>
 }
 
-// Create the context with an undefined default value
-export const ModalContext = createContext<ModalContextType | undefined>(
-  undefined
-)
+const defaultContextValue: ModalContextType = {
+  isModalOpen: false,
+  modalTaskId: null,
+  setModalTaskId: () => {},
+  modalMode: "create",
+  setModalMode: () => {},
+  openModal: () => {},
+  closeModal: () => {},
+  openDialog: () => {},
+  closeDialog: () => {},
+  isDialogOpen: false,
+}
+
+export const ModalContext = createContext<ModalContextType>(defaultContextValue)
 
 // Provide context to children components
 export const ModalProvider: React.FC<{ children: ReactNode }> = ({
@@ -54,9 +44,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const [modalTaskId, setModalTaskId] = useState<string | null>(null)
-  const [tasks, setTasks] = useState<TTodo[]>([])
   const [modalMode, setModalMode] = useState<"create" | "edit">("create")
-  const [defaultStatus, setDefaultStatus] = useState("")
 
   const openModal = (mode: "create" | "edit", taskId: string | null) => {
     setModalMode(mode)
@@ -85,10 +73,6 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
         openDialog,
         closeDialog,
         isDialogOpen,
-        tasks,
-        setTasks,
-        defaultStatus,
-        setDefaultStatus,
         setModalTaskId,
       }}
     >

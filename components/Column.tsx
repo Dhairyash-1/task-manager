@@ -1,11 +1,11 @@
 import Image from "next/image"
-import React, { ReactElement, useEffect, useState } from "react"
-import TaskItemCard from "./TaskItemCard"
+import React from "react"
 import TaskButton from "./TaskButton"
 import { useDrop } from "react-dnd"
-import { ItemTypes } from "@/utils/helper"
+import { ItemTypes } from "@/lib/helper"
 import TaskModal from "./TaskModal"
-import { useModal } from "@/context"
+import { useModal } from "@/context/ModalContext"
+import { useTodo } from "@/context/TodoContext"
 
 interface inputProp {
   status: string
@@ -25,15 +25,8 @@ const Column = ({ status, onDrop, children }: inputProp) => {
     accept: ItemTypes.TASK,
     drop: (item: any) => onDrop(item.id, status),
   })
-  const {
-    isModalOpen,
-    openModal,
-    closeModal,
-    modalMode,
-    modalTaskId,
-    defaultStatus,
-    setDefaultStatus,
-  } = useModal()
+  const { openModal } = useModal()
+  const { setDefaultTaskStatus } = useTodo()
 
   const title = getTitle[status]
   return (
@@ -62,17 +55,11 @@ const Column = ({ status, onDrop, children }: inputProp) => {
         handleClick={() => {
           openModal("create", null)
           if (status !== "") {
-            setDefaultStatus(status)
+            setDefaultTaskStatus(status)
           }
         }}
       />
-      <TaskModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        mode={modalMode}
-        taskId={modalTaskId}
-        defaultStatus={defaultStatus}
-      />
+      <TaskModal />
     </div>
   )
 }

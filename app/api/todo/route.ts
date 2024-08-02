@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server"
 export async function GET(request: NextRequest) {
   try {
     connectDB()
-    // Extract the 'id' from the query parameters
+
     const url = new URL(request.url)
     const id = url.searchParams.get("id")
 

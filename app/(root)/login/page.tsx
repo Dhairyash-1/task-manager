@@ -11,6 +11,7 @@ import { useUser } from "@/context/UserContext"
 const Page = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [apiError, setApiError] = useState({ status: false, message: "" })
+  const [isLoading, setIsLoading] = useState(false)
   const { refreshSession, setUser } = useUser()
   const router = useRouter()
   const {
@@ -18,20 +19,21 @@ const Page = () => {
     reset,
     handleSubmit,
     formState: { errors, isSubmitting },
-    getValues,
   } = useForm()
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword)
   }
+
   async function onSubmit(data: FieldValues) {
     try {
+      setIsLoading(true)
       const res = await axios.post("/api/users/login", data)
       if (res.status === 200) {
         refreshSession()
+        router.push("/")
+        reset()
       }
-      console.log("res", res)
-      router.push("/")
-      reset()
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
         const errorMessage =
@@ -40,6 +42,8 @@ const Page = () => {
       } else {
         setApiError({ status: true, message: "An unexpected error occurred." })
       }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -113,9 +117,9 @@ const Page = () => {
 
           <button
             disabled={isSubmitting}
-            className="w-full blue-gradient opacity-65  text-white py-3 mt-6 rounded-md shadow-lg hover:opacity-90 transition duration-300"
+            className="w-full blue-gradient opacity-65  text-white py-3 mt-6 rounded-md shadow-lg hover:opacity-90  transition duration-300"
           >
-            Log In
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </div>
         {apiError.status && (

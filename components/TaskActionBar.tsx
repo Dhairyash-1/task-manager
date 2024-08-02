@@ -1,9 +1,9 @@
-import { taskBarActionBtn } from "@/utils/constant"
+import { taskBarActionBtn } from "@/lib/constant"
 import Image from "next/image"
 import React from "react"
 import Button from "./Button"
 import TaskButton from "./TaskButton"
-import { useModal } from "@/context"
+import { useModal } from "@/context/ModalContext"
 
 const TaskActionBar = () => {
   const { openModal } = useModal()

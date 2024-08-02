@@ -1,43 +1,38 @@
 "use client"
-import React, { ChangeEvent, useEffect, useState } from "react"
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import Button from "./Button"
 import Image from "next/image"
-import CustomSelect from "./CustomSelect"
+import CustomSelect from "./CustomInput"
 import AutoResizeTextarea from "./AutoResizeTextarea"
 import axios from "axios"
-import { usePathname } from "next/navigation"
-import { useModal } from "@/context"
-import { createTodo, fetchTodos } from "@/utils/api"
-import { formatDate } from "@/utils/helper"
+import { useModal } from "@/context/ModalContext"
+import { createTodo, fetchTodos } from "@/lib/api"
+import { formatDate } from "@/lib/helper"
 import { toast } from "react-toastify"
+import { useTodo } from "@/context/TodoContext"
+import Loader from "./Loader"
 
-interface TaskModalProps {
-  isOpen: boolean
-  onClose: () => void
-  mode: "create" | "edit"
-  taskId: string | null
-  defaultStatus: string
-}
+const TaskModal = () => {
+  const { setDefaultTaskStatus, defaultTaskStatus, setTasks } = useTodo()
+  const { modalTaskId, modalMode, isModalOpen, closeModal } = useModal()
 
-const TaskModal: React.FC<TaskModalProps> = ({
-  isOpen,
-  onClose,
-  mode,
-  defaultStatus,
-}) => {
-  const pathname = usePathname()
   const [todoData, setTodoData] = useState({
     title: "",
     description: "",
-    status: defaultStatus,
+    status: defaultTaskStatus,
     priority: "",
     deadline: "",
     content: "",
   })
-  console.log("todosdata", todoData)
+
   const [isLoading, setIsLoading] = useState(false)
   const [isMaximized, setIsMaximized] = useState(false)
-  const { modalTaskId, setTasks, setDefaultStatus } = useModal()
   const toggleMaximize = () => {
     setIsMaximized(!isMaximized)
   }
@@ -53,23 +48,20 @@ const TaskModal: React.FC<TaskModalProps> = ({
       setTodoData(updatedTodo)
       setIsLoading(false)
     }
-    if (mode === "edit" && modalTaskId !== null) {
+    if (modalMode === "edit" && modalTaskId !== null) {
       fetchTodo(modalTaskId)
     } else {
       // Reset form data when mode is 'create'
       setTodoData({
         title: "",
         description: "",
-        status: defaultStatus,
+        status: defaultTaskStatus,
         priority: "",
         deadline: "",
         content: "",
       })
     }
-  }, [modalTaskId, mode, defaultStatus])
-
-  if (!isOpen) return null
-  console.log("mode", mode, "status", defaultStatus)
+  }, [modalTaskId, modalMode, defaultTaskStatus])
 
   const handleSelectChange = (field: string, value: string) => {
     setTodoData((prevData) => {
@@ -79,7 +71,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
     })
   }
 
-  async function createTodoApi() {
+  const createTodoApi = useCallback(async () => {
     if (!todoData.title) {
       return toast.error("Task Title is required", { autoClose: 3000 })
     }
@@ -90,7 +82,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
       setIsLoading(true)
       const res = await createTodo({
         ...todoData,
-        path: pathname,
       })
       if (res.status === 201) {
         const allTodo = await fetchTodos()
@@ -98,21 +89,21 @@ const TaskModal: React.FC<TaskModalProps> = ({
         setTodoData({
           title: "",
           description: "",
-          status: defaultStatus,
+          status: defaultTaskStatus,
           priority: "",
           deadline: "",
           content: "",
         })
-        onClose()
+        closeModal()
       }
     } catch (error) {
       console.log(error)
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [defaultTaskStatus, todoData, setTasks, closeModal])
 
-  async function updateTodoApi() {
+  const updateTodoApi = useCallback(async () => {
     try {
       setIsLoading(true)
       const res = await axios.patch(
@@ -125,42 +116,48 @@ const TaskModal: React.FC<TaskModalProps> = ({
         setTodoData({
           title: "",
           description: "",
-          status: defaultStatus,
+          status: defaultTaskStatus,
           priority: "",
           deadline: "",
           content: "",
         })
-        onClose()
+        closeModal()
       }
     } catch (error) {
       console.log(error)
     } finally {
       setIsLoading(false)
     }
-  }
-  async function deleteTodoApi(id: string) {
-    try {
-      setIsLoading(true)
-      const res = await axios.delete(`/api/todo/delete?id=${id}`)
-      if (res.status === 200) {
-        const allTodo = await fetchTodos()
-        setTasks(allTodo)
-        setTodoData({
-          title: "",
-          description: "",
-          status: defaultStatus,
-          priority: "",
-          deadline: "",
-          content: "",
-        })
-        onClose()
+  }, [todoData, modalTaskId, defaultTaskStatus, setTasks, closeModal])
+
+  const deleteTodoApi = useCallback(
+    async (id: string) => {
+      try {
+        setIsLoading(true)
+        const res = await axios.delete(`/api/todo/delete?id=${id}`)
+        if (res.status === 200) {
+          const allTodo = await fetchTodos()
+          setTasks(allTodo)
+          setTodoData({
+            title: "",
+            description: "",
+            status: defaultTaskStatus,
+            priority: "",
+            deadline: "",
+            content: "",
+          })
+          closeModal()
+        }
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    },
+    [closeModal, defaultTaskStatus, setTasks]
+  )
+
+  if (!isModalOpen) return null
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
@@ -170,7 +167,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
         } `}
       >
         {isLoading ? (
-          <div className="">Loading...</div>
+          <Loader />
         ) : (
           <>
             <div className="flex justify-between items-center mb-4">
@@ -179,12 +176,12 @@ const TaskModal: React.FC<TaskModalProps> = ({
                   icon="/close.png"
                   bgColor="none"
                   onClick={() => {
-                    onClose()
-                    setDefaultStatus("")
+                    closeModal()
+                    setDefaultTaskStatus("")
                     setTodoData({
                       title: "",
                       description: "",
-                      status: defaultStatus,
+                      status: defaultTaskStatus,
                       priority: "",
                       deadline: "",
                       content: "",
@@ -200,20 +197,24 @@ const TaskModal: React.FC<TaskModalProps> = ({
               <div className="flex items-center gap-4">
                 <Button
                   icon=""
-                  label={mode === "create" ? "Add Task" : "Edit Task"}
-                  onClick={mode === "create" ? createTodoApi : updateTodoApi}
+                  label={modalMode === "create" ? "Add Task" : "Edit Task"}
+                  onClick={
+                    modalMode === "create" ? createTodoApi : updateTodoApi
+                  }
                 />
                 <Button icon="/share.png" label="Share" />
                 {/* <Button icon="/star.png" label="Favourite" /> */}
-                <Button
-                  icon=""
-                  onClick={() => {
-                    if (modalTaskId !== null) {
-                      deleteTodoApi(modalTaskId)
-                    }
-                  }}
-                  label="Delete"
-                />
+                {modalMode === "edit" && (
+                  <Button
+                    icon=""
+                    onClick={() => {
+                      if (modalTaskId !== null) {
+                        deleteTodoApi(modalTaskId)
+                      }
+                    }}
+                    label="Delete"
+                  />
+                )}
               </div>
             </div>
 
@@ -265,11 +266,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
                     icon: "/calander.png",
                     value: todoData.deadline,
                     field: "deadline",
-                    options: [
-                      { value: "today", label: "Today" },
-                      { value: "tomorrow", label: "Tomorrow" },
-                      { value: "nextweek", label: "Next Week" },
-                    ],
                   },
                 ].map(({ type, label, icon, value, field, options }) => (
                   <div className="flex items-center" key={label}>
@@ -307,19 +303,19 @@ const TaskModal: React.FC<TaskModalProps> = ({
                     <label className="text-[#666666] font-normal text-base">
                       Description
                     </label>
-                    <input
-                      className="w-full border-none outline-none shadow-none font p-2  placeholder:text-[#cccccc] rounded"
-                      type="text"
-                      placeholder="Not Selected"
-                      value={todoData.description}
-                      onChange={(e) =>
-                        setTodoData((prev) => ({
-                          ...prev,
-                          description: e.target.value,
-                        }))
-                      }
-                    />
                   </div>
+                  <input
+                    className=" w-full border-none outline-none shadow-none font p-2  placeholder:text-[#cccccc] rounded"
+                    type="text"
+                    placeholder="Write task description"
+                    value={todoData.description}
+                    onChange={(e) =>
+                      setTodoData((prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }))
+                    }
+                  />
                 </div>
               </div>
               {/* custom prop button */}
@@ -343,17 +339,9 @@ const TaskModal: React.FC<TaskModalProps> = ({
                 }))
               }
             />
-            {/* <div className="flex justify-end mt-4">
-              {mode === "create" ? (
-                <Button label="Create" onClick={createTodoApi} />
-              ) : (
-                <Button label="Update" onClick={updateTodoApi} />
-              )}
-            </div> */}
           </>
         )}
       </div>
-      {/* <CustomAlertDialog create={createTodoApi} /> */}
     </div>
   )
 }

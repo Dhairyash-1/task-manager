@@ -1,19 +1,20 @@
-import { strict } from "assert"
 import { NextRequest, NextResponse } from "next/server"
 
-export async function GET() {
+export async function POST(request: NextRequest) {
   try {
     const response = NextResponse.json(
       {
-        message: "Logout Successfull",
+        message: "Logout Successful",
         success: true,
       },
       { status: 200 }
     )
 
-    response.cookies.delete("accessToken")
+    response.cookies.set("accessToken", "", { expires: new Date(0) })
+
     return response
   } catch (error: any) {
+    console.error("Logout error:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

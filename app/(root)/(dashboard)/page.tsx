@@ -6,7 +6,7 @@ import React from "react"
 
 const Page = () => {
   return (
-    <div className="bg-[#f2f2f2] flex w-full">
+    <div className="bg-[#f2f2f2] flex w-full min-h-full">
       <SideBar />
       <div className="pl-4 pr-8 py-6 flex-1">
         <DashBoardHeader />

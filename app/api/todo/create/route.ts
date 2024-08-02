@@ -1,14 +1,13 @@
 import { connectDB } from "@/db"
 import { authMiddleware, AuthenticatedRequest } from "@/lib/authMiddleware"
 import Todo from "@/models/todo.model"
-import { revalidatePath } from "next/cache"
 import { NextResponse } from "next/server"
 
 async function handler(request: AuthenticatedRequest) {
   try {
     await connectDB()
     const reqBody = await request.json()
-    const { title, description, status, priority, deadline, path } = reqBody
+    const { title, description, status, priority, deadline } = reqBody
 
     if (!title || !status) {
       return NextResponse.json(
@@ -17,7 +16,6 @@ async function handler(request: AuthenticatedRequest) {
       )
     }
 
-    // Use the userId from the authenticated request
     const userId = request.userId
     console.log("userid", userId)
 
@@ -31,14 +29,14 @@ async function handler(request: AuthenticatedRequest) {
     const newTodo = new Todo({
       title,
       status,
-      owner: userId, // Set the owner to the authenticated user's ID
+      owner: userId,
     })
     if (priority) newTodo.priority = priority
     if (description) newTodo.description = description
     if (deadline) newTodo.deadline = new Date(deadline)
 
     await newTodo.save()
-    revalidatePath(path)
+
     return NextResponse.json(
       { message: "To-do created successfully", todo: newTodo },
       { status: 201 }

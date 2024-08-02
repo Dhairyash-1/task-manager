@@ -15,13 +15,13 @@ async function handler(request: AuthenticatedRequest) {
     }
 
     return NextResponse.json(
-      { message: "To-do created successfully", todo: todos },
-      { status: 201 }
+      { message: "All User todos fetched", todo: todos },
+      { status: 200 }
     )
   } catch (error) {
     console.error("Error getting all to-do:", error)
     return NextResponse.json(
-      { error: "An error occurred while creating the to-do" },
+      { error: "An error occurred while getting user todos" },
       { status: 500 }
     )
   }

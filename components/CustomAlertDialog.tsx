@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { useModal } from "@/context"
+import { useModal } from "@/context/ModalContext"
 import { MouseEventHandler } from "react"
 
 const CustomAlertDialog = ({ create }: { create: Function }) => {

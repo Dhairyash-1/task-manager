@@ -9,8 +9,6 @@ async function handler(request: AuthenticatedRequest) {
     const url = new URL(request.url)
     const id = url.searchParams.get("id")
 
-    console.log("id", id)
-
     if (!id) {
       return NextResponse.json(
         { error: "ID parameter is missing" },
@@ -22,12 +20,12 @@ async function handler(request: AuthenticatedRequest) {
 
     const task = (await Todo.findById(id)) as ITodo
     if (!task) {
-      return NextResponse.json({ error: "task is not found" }, { status: 404 })
+      return NextResponse.json({ error: "todo is not found" }, { status: 404 })
     }
 
     if (task.owner.toString() !== ownerId?.toString()) {
       return NextResponse.json(
-        { error: "Only owner can delete task" },
+        { error: "Only owner can delete todo" },
         { status: 429 }
       )
     }
@@ -35,7 +33,7 @@ async function handler(request: AuthenticatedRequest) {
     await task.deleteOne()
 
     return NextResponse.json(
-      { message: "task deleted successfully" },
+      { message: "todo deleted successfully" },
       { status: 200 }
     )
   } catch (error) {

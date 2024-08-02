@@ -2,8 +2,8 @@ import React from "react"
 import Badge from "./Badge"
 import Image from "next/image"
 import { useDrag } from "react-dnd"
-import { formatDate, ItemTypes, timeAgo } from "@/utils/helper"
-import { useModal } from "@/context"
+import { formatDate, ItemTypes, timeAgo } from "@/lib/helper"
+import { useModal } from "@/context/ModalContext"
 
 interface inputProp {
   task: {

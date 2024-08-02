@@ -1,13 +1,13 @@
 "use client"
-import { sideBarLinks } from "@/utils/constant"
+import { sideBarLinks } from "@/lib/constant"
 import axios from "axios"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 
-import React from "react"
+import React, { useState } from "react"
 import TaskButton from "./TaskButton"
-import { useModal } from "@/context"
+import { useModal } from "@/context/ModalContext"
 import { useUser } from "@/context/UserContext"
 
 const SideBar = () => {
@@ -15,11 +15,13 @@ const SideBar = () => {
   const router = useRouter()
   const { openModal } = useModal()
   const { user, loading, setUser, refreshSession } = useUser()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   console.log("user", user)
   async function handleLogout() {
     try {
-      const res = await axios.get("/api/users/logout")
+      setIsLoggingOut(true)
+      const res = await axios.post("/api/users/logout")
       if (res.status === 200) {
         setUser(null)
         refreshSession()
@@ -27,6 +29,8 @@ const SideBar = () => {
       }
     } catch (error) {
       console.log(error)
+    } finally {
+      setIsLoggingOut(false)
     }
   }
   return (
@@ -72,7 +76,7 @@ const SideBar = () => {
             onClick={handleLogout}
             className="bg-[#f4f4f4] py-[10.5px] px-2 text-[16px] text-[#797979] rounded-[4px] font-normal"
           >
-            Logout
+            {isLoggingOut ? "Logging out..." : "Logout"}
           </button>
         </div>
       </header>

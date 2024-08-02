@@ -85,7 +85,7 @@ const CustomSelect: React.FC<InputProps> = ({
         className="bg-transparent p-2 rounded border-none outline-none cursor-pointer w-full text-black placeholder:text-[#cccccc]"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
+        placeholder={value}
       />
     )
   }
