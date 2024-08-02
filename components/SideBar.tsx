@@ -21,12 +21,9 @@ const SideBar = () => {
     try {
       const res = await axios.get("/api/users/logout")
       if (res.status === 200) {
+        setUser(null)
+        refreshSession()
         router.push("/login")
-        window.location.reload()
-        if (res.status === 200) {
-          setUser(null)
-          refreshSession()
-        }
       }
     } catch (error) {
       console.log(error)
