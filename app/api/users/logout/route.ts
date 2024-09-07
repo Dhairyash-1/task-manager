@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(request: NextRequest) {
@@ -10,7 +11,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     )
 
-    response.cookies.set("accessToken", "", { expires: new Date(0) })
+    response.cookies.set("accessToken", "", { expires: new Date(0), path: "/" })
 
     return response
   } catch (error: any) {

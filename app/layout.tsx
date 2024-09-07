@@ -3,7 +3,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ModalProvider } from "@/context/ModalContext"
 import { UserProvider } from "@/context/UserContext"
-import { TodoProvider } from "@/context/TodoContext"
+
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 
@@ -23,11 +23,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ToastContainer />
-        <TodoProvider>
-          <UserProvider>
-            <ModalProvider>{children}</ModalProvider>
-          </UserProvider>
-        </TodoProvider>
+        <UserProvider>
+          <ModalProvider>{children}</ModalProvider>
+        </UserProvider>
       </body>
     </html>
   )

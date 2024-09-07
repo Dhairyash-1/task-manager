@@ -6,21 +6,20 @@ export async function GET(request: NextRequest) {
     const token = request.cookies.get("accessToken")?.value
 
     if (!token) {
-      NextResponse.json({ error: "Token not found" })
+      return NextResponse.json({ error: "Token not found" }, { status: 401 })
     }
+
     const user = verify(token as string, process.env.TOKEN_SECRET as string)
-    if (!user) {
-      NextResponse.json({ error: "Invaild token" })
-    }
 
     return NextResponse.json(
       { user: user, message: "user found" },
       { status: 200 }
     )
   } catch (error) {
+    console.error(error)
     return NextResponse.json(
-      { error: "An error occurred while getting user" },
-      { status: 500 }
+      { error: "Invalid token or authentication failed" },
+      { status: 401 }
     )
   }
 }

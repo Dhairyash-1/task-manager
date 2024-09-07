@@ -1,36 +1,45 @@
 "use client"
-import React, {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react"
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react"
 import Button from "./Button"
 import Image from "next/image"
 import CustomSelect from "./CustomInput"
 import AutoResizeTextarea from "./AutoResizeTextarea"
-import axios from "axios"
 import { useModal } from "@/context/ModalContext"
-import { createTodo, fetchTodos } from "@/lib/api"
 import { formatDate } from "@/lib/helper"
 import { toast } from "react-toastify"
-import { useTodo } from "@/context/TodoContext"
 import Loader from "./Loader"
+import {
+  createTodo,
+  deleteTodo,
+  getTodoById,
+  updateTodo,
+} from "@/lib/actions/todo.action"
+import { usePathname } from "next/navigation"
+import { useUser } from "@/context/UserContext"
+interface ITodosData {
+  title: string
+  description: string
+  status: TStatus | undefined
+  priority: TPriority | undefined
+  deadline: string
+  content: string
+}
+const initialTodoData = {
+  title: "",
+  description: "",
+  status: undefined,
+  priority: undefined,
+  deadline: "",
+  content: "",
+} as ITodosData
 
 const TaskModal = () => {
-  const { setDefaultTaskStatus, defaultTaskStatus, setTasks } = useTodo()
-  const { modalTaskId, modalMode, isModalOpen, closeModal } = useModal()
+  const { modalTaskId, modalMode, isModalOpen, closeModal, status } = useModal()
+  const { user } = useUser()
 
-  const [todoData, setTodoData] = useState({
-    title: "",
-    description: "",
-    status: defaultTaskStatus,
-    priority: "",
-    deadline: "",
-    content: "",
-  })
+  const path = usePathname()
 
+  const [todoData, setTodoData] = useState<ITodosData>(initialTodoData)
   const [isLoading, setIsLoading] = useState(false)
   const [isMaximized, setIsMaximized] = useState(false)
   const toggleMaximize = () => {
@@ -38,35 +47,46 @@ const TaskModal = () => {
   }
 
   useEffect(() => {
-    async function fetchTodo(id: string) {
-      setIsLoading(true)
-      const res = await axios.get(`/api/todo?id=${id}`)
-      const updatedTodo = {
-        ...res.data.todo,
-        deadline: formatDate(res.data.todo.deadline),
+    setTodoData((prevData) => ({
+      ...prevData,
+      status: status,
+    }))
+  }, [status])
+
+  useEffect(() => {
+    async function getTodoDetails(taskId: string) {
+      try {
+        setIsLoading(true)
+        const data = await getTodoById({ id: taskId })
+        if (!data?.todo) {
+          throw new Error("No Todo found for given ID")
+        }
+        const todo = data.todo
+        console.log("todo", todo)
+        const todoState = {
+          title: todo.title,
+          status: todo.status,
+          description: todo.description,
+          priority: todo.priority as TPriority,
+          deadline: formatDate(todo.deadline),
+          content: todo.content,
+        }
+        setTodoData(todoState)
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setIsLoading(false)
       }
-      setTodoData(updatedTodo)
-      setIsLoading(false)
     }
     if (modalMode === "edit" && modalTaskId !== null) {
-      fetchTodo(modalTaskId)
-    } else {
-      // Reset form data when mode is 'create'
-      setTodoData({
-        title: "",
-        description: "",
-        status: defaultTaskStatus,
-        priority: "",
-        deadline: "",
-        content: "",
-      })
+      getTodoDetails(modalTaskId)
     }
-  }, [modalTaskId, modalMode, defaultTaskStatus])
+  }, [modalTaskId, modalMode])
 
   const handleSelectChange = (field: string, value: string) => {
     setTodoData((prevData) => {
       const newState = { ...prevData, [field]: value }
-      console.log(newState) // To verify the new state
+      console.log(newState)
       return newState
     })
   }
@@ -78,115 +98,73 @@ const TaskModal = () => {
     if (!todoData.status) {
       return toast.error("Task status is required", { autoClose: 3000 })
     }
-    try {
-      setIsLoading(true)
-      const res = await createTodo({
-        ...todoData,
-      })
-      if (res.status === 201) {
-        const allTodo = await fetchTodos()
-        setTasks(allTodo)
-        setTodoData({
-          title: "",
-          description: "",
-          status: defaultTaskStatus,
-          priority: "",
-          deadline: "",
-          content: "",
-        })
-        closeModal()
-      }
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setIsLoading(false)
+    const createTodoData = {
+      title: todoData.title,
+      description: todoData.description,
+      status: todoData.status,
+      priority: todoData.priority,
+      deadline: todoData.deadline,
+      content: todoData.content,
+      path: path,
+      owner: user?.id as string,
     }
-  }, [defaultTaskStatus, todoData, setTasks, closeModal])
+    await createTodo(createTodoData)
+    closeModal()
+    setTodoData({
+      ...initialTodoData,
+      status: status,
+    })
+  }, [todoData, path, user?.id, closeModal, status])
 
-  const updateTodoApi = useCallback(async () => {
-    try {
-      setIsLoading(true)
-      const res = await axios.patch(
-        `/api/todo/update?id=${modalTaskId}`,
-        todoData
-      )
-      if (res.status === 200) {
-        const allTodo = await fetchTodos()
-        setTasks(allTodo)
-        setTodoData({
-          title: "",
-          description: "",
-          status: defaultTaskStatus,
-          priority: "",
-          deadline: "",
-          content: "",
-        })
-        closeModal()
-      }
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setIsLoading(false)
+  const updateTodoApi = async () => {
+    const updateData = {
+      title: todoData.title,
+      description: todoData.description,
+      status: todoData.status as TStatus,
+      priority: todoData.priority,
+      deadline: todoData.deadline,
+      content: todoData.content,
+      owner: user?.id as string,
     }
-  }, [todoData, modalTaskId, defaultTaskStatus, setTasks, closeModal])
+    await updateTodo({ id: modalTaskId as string, updateData, path })
+    closeModal()
+    setTodoData({
+      ...initialTodoData,
+      status: status,
+    })
+  }
 
-  const deleteTodoApi = useCallback(
-    async (id: string) => {
-      try {
-        setIsLoading(true)
-        const res = await axios.delete(`/api/todo/delete?id=${id}`)
-        if (res.status === 200) {
-          const allTodo = await fetchTodos()
-          setTasks(allTodo)
-          setTodoData({
-            title: "",
-            description: "",
-            status: defaultTaskStatus,
-            priority: "",
-            deadline: "",
-            content: "",
-          })
-          closeModal()
-        }
-      } catch (error) {
-        console.log(error)
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [closeModal, defaultTaskStatus, setTasks]
-  )
+  const deleteTodoApi = async (id: string) => {
+    await deleteTodo({ id: id, path: path })
+  }
+
+  function handleModalClose() {
+    closeModal()
+    setTodoData({
+      ...initialTodoData,
+      status: status,
+    })
+  }
 
   if (!isModalOpen) return null
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
-      <div
-        className={`bg-white py-4 px-6 rounded-lg shadow-xl w-full ${
-          isMaximized ? "w-full h-screen" : "max-w-[670px]"
-        } `}
-      >
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <div
+            className={`bg-white py-4 px-6 rounded-lg shadow-xl w-full ${
+              isMaximized ? "w-full h-screen" : "max-w-[670px]"
+            } `}
+          >
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-4">
                 <Button
                   icon="/close.png"
                   bgColor="none"
-                  onClick={() => {
-                    closeModal()
-                    setDefaultTaskStatus("")
-                    setTodoData({
-                      title: "",
-                      description: "",
-                      status: defaultTaskStatus,
-                      priority: "",
-                      deadline: "",
-                      content: "",
-                    })
-                  }}
+                  onClick={handleModalClose}
                 />
                 <Button
                   icon="/maximize.png"
@@ -280,7 +258,7 @@ const TaskModal = () => {
                         type={type as "select" | "date"}
                         options={options}
                         placeholder="Not Selected"
-                        value={value}
+                        value={value as string}
                         onChange={(option: string) =>
                           handleSelectChange(field, option)
                         }
@@ -339,9 +317,9 @@ const TaskModal = () => {
                 }))
               }
             />
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -14,18 +14,15 @@ const SideBar = () => {
   const pathname = usePathname()
   const router = useRouter()
   const { openModal } = useModal()
-  const { user, loading, setUser, refreshSession } = useUser()
+  const { user, loading, setUser } = useUser()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-  console.log("user", user)
   async function handleLogout() {
     try {
       setIsLoggingOut(true)
       const res = await axios.post("/api/users/logout")
       if (res.status === 200) {
-        setUser(null)
-        refreshSession()
-        router.push("/login")
+        router.refresh()
       }
     } catch (error) {
       console.log(error)
@@ -45,7 +42,7 @@ const SideBar = () => {
             className="rounded-full"
           />
           <h2 className="text-[#080808] font-medium text-xl line-clamp-1">
-            {loading ? "Loading..." : user && user.fullName}
+            {loading ? "Loading..." : user?.fullName}
           </h2>
         </div>
         <div className="flex justify-between items-center mt-2">

@@ -6,11 +6,10 @@ import TaskItemCard from "./TaskItemCard"
 import Column from "./Column"
 import { DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
-import axios from "axios"
-import { fetchTodos } from "@/lib/api"
-import Loader from "./Loader"
-import { useTodo } from "@/context/TodoContext"
-
+import { updateTodo } from "@/lib/actions/todo.action"
+import { usePathname } from "next/navigation"
+import TaskModal from "./TaskModal"
+import { useUser } from "@/context/UserContext"
 interface Task {
   _id: string
   title: string
@@ -22,83 +21,58 @@ interface Task {
   updatedAt: string
 }
 
-const TaskBoard = () => {
-  const { tasks, setTasks } = useTodo()
-  const [isLoading, setIsLoading] = useState(true)
+const TaskBoard = ({ AllTasks }: { AllTasks: Task[] }) => {
+  const path = usePathname()
+  const { user } = useUser()
 
-  useEffect(() => {
-    async function fetchTasks() {
-      try {
-        const todos = await fetchTodos()
-        setTasks(todos)
-      } catch (error) {
-        console.error("Failed to fetch tasks:", error)
-      } finally {
-        setIsLoading(false)
-      }
+  async function handleDrop(id: string, newStatus: TStatus) {
+    const params = {
+      id: id,
+      updateData: { status: newStatus, owner: user?.id as string },
+      path,
     }
-
-    fetchTasks()
-  }, [])
-
-  async function handleDrop(id: string, newStatus: string) {
-    setTasks((prevTask: Task[]) => {
-      return prevTask.map((task) =>
-        task._id === id ? { ...task, status: newStatus } : task
-      )
-    })
-
-    const res = await axios.patch(
-      `/api/todo/update?id=${id}`,
-      JSON.stringify({ status: newStatus })
-    )
-
-    console.log("task status update", res)
+    await updateTodo(params)
   }
 
   return (
     <>
       <TaskActionBar />
       <DndProvider backend={HTML5Backend}>
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <div
-            className={`bg-white rounded-md p-4 flex gap-4 ${
-              isLoading ? "items-center justify-center" : "items-start"
-            } `}
-          >
-            <Column status="todo" onDrop={handleDrop}>
-              {tasks
-                .filter((task) => task.status === "todo")
-                .map((task, i) => (
-                  <TaskItemCard key={i} task={task} />
-                ))}
-            </Column>
-            <Column status="inprogress" onDrop={handleDrop}>
-              {tasks
-                .filter((task) => task.status === "inprogress")
-                .map((task, i) => (
-                  <TaskItemCard key={i} task={task} />
-                ))}
-            </Column>
-            <Column status="inreview" onDrop={handleDrop}>
-              {tasks
-                .filter((task) => task.status === "inreview")
-                .map((task, i) => (
-                  <TaskItemCard key={i} task={task} />
-                ))}
-            </Column>
-            <Column status="finished" onDrop={handleDrop}>
-              {tasks
-                .filter((task) => task.status === "finished")
-                .map((task, i) => (
-                  <TaskItemCard key={i} task={task} />
-                ))}
-            </Column>
-          </div>
-        )}
+        <div
+          className={`bg-white rounded-md p-4 flex gap-4 overflow-y-auto items-start
+            `}
+        >
+          <Column status="todo" onDrop={handleDrop}>
+            {AllTasks.filter((task) => task.status === "todo").map(
+              (task, i) => (
+                <TaskItemCard key={i} task={task} />
+              )
+            )}
+          </Column>
+          <Column status="inprogress" onDrop={handleDrop}>
+            {AllTasks.filter((task) => task.status === "inprogress").map(
+              (task, i) => (
+                <TaskItemCard key={i} task={task} />
+              )
+            )}
+          </Column>
+          <Column status="inreview" onDrop={handleDrop}>
+            {AllTasks.filter((task) => task.status === "inreview").map(
+              (task, i) => (
+                <TaskItemCard key={i} task={task} />
+              )
+            )}
+          </Column>
+          <Column status="finished" onDrop={handleDrop}>
+            {AllTasks.filter((task) => task.status === "finished").map(
+              (task, i) => (
+                <TaskItemCard key={i} task={task} />
+              )
+            )}
+          </Column>
+        </div>
       </DndProvider>
+      <TaskModal />
     </>
   )
 }

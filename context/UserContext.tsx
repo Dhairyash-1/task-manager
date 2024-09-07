@@ -9,7 +9,7 @@ import React, {
 } from "react"
 
 export interface User {
-  userId: string
+  id: string
   fullName: string
   email: string
 }
@@ -44,7 +44,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
       setLoading(false)
     }
   }
-
   useEffect(() => {
     loadUserFromCookie()
   }, [])

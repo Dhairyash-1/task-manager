@@ -14,11 +14,16 @@ interface ModalContextType {
   setModalTaskId: Dispatch<SetStateAction<string | null>>
   modalMode: "create" | "edit"
   setModalMode: Dispatch<SetStateAction<"create" | "edit">>
-  openModal: (mode: "create" | "edit", taskId: string | null) => void
+  openModal: (
+    mode: "create" | "edit",
+    taskId: string | null,
+    defaultStatus?: TStatus
+  ) => void
   closeModal: () => void
   openDialog: () => void
   closeDialog: () => void
   isDialogOpen: boolean
+  status: TStatus | undefined
 }
 
 const defaultContextValue: ModalContextType = {
@@ -32,6 +37,7 @@ const defaultContextValue: ModalContextType = {
   openDialog: () => {},
   closeDialog: () => {},
   isDialogOpen: false,
+  status: undefined,
 }
 
 export const ModalContext = createContext<ModalContextType>(defaultContextValue)
@@ -45,17 +51,24 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
 
   const [modalTaskId, setModalTaskId] = useState<string | null>(null)
   const [modalMode, setModalMode] = useState<"create" | "edit">("create")
+  const [status, setStatus] = useState<TStatus | undefined>(undefined)
 
-  const openModal = (mode: "create" | "edit", taskId: string | null) => {
+  const openModal = (
+    mode: "create" | "edit",
+    taskId: string | null,
+    status: TStatus | undefined
+  ) => {
     setModalMode(mode)
     setModalTaskId(taskId)
     setIsModalOpen(true)
+    if (status) setStatus(status)
   }
 
   const closeModal = () => {
     setIsModalOpen(false)
     setModalMode("create")
     setModalTaskId(null)
+    setStatus(undefined)
   }
 
   const openDialog = () => setIsDialogOpen(true)
@@ -74,6 +87,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
         closeDialog,
         isDialogOpen,
         setModalTaskId,
+        status,
       }}
     >
       {children}

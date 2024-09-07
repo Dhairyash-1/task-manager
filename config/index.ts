@@ -1,19 +1,30 @@
 import mongoose from "mongoose"
 
-let isConnected = false
-
 export async function connectDB() {
-  if (isConnected) {
-    console.log("DB already connected")
+  mongoose.set("strictQuery", true)
+
+  if (!process.env.MONGODB_URI) {
+    console.log("MISSING MONGODB_URL")
+    return
+  }
+
+  // Check if Mongoose is already connected
+  if (mongoose.connection.readyState === 1) {
+    console.log("MongoDB already connected")
+    return
+  }
+
+  // Check if Mongoose is connecting (optional, to handle in-progress connections)
+  if (mongoose.connection.readyState === 2) {
+    console.log("MongoDB connection in progress")
     return
   }
 
   try {
     await mongoose.connect(`${process.env.MONGODB_URI}/task-manager`)
     console.log("MongoDB connected successfully.")
-    isConnected = true
 
-    // Add event listeners once
+    // Add event listeners once after connection is established
     mongoose.connection.on("connected", () => {
       console.log("Mongoose connected to DB cluster")
     })

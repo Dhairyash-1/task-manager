@@ -26,8 +26,8 @@ const Page = () => {
     try {
       setIsLoading(true)
       const res = await axios.post("/api/users/signup", data)
-      reset()
       router.push("/login")
+      reset()
       console.log("res", res)
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {

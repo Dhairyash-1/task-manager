@@ -3,12 +3,10 @@ import React from "react"
 import TaskButton from "./TaskButton"
 import { useDrop } from "react-dnd"
 import { ItemTypes } from "@/lib/helper"
-import TaskModal from "./TaskModal"
 import { useModal } from "@/context/ModalContext"
-import { useTodo } from "@/context/TodoContext"
 
 interface inputProp {
-  status: string
+  status: TStatus
   onDrop: Function
   children: React.ReactNode
 }
@@ -26,7 +24,6 @@ const Column = ({ status, onDrop, children }: inputProp) => {
     drop: (item: any) => onDrop(item.id, status),
   })
   const { openModal } = useModal()
-  const { setDefaultTaskStatus } = useTodo()
 
   const title = getTitle[status]
   return (
@@ -53,13 +50,9 @@ const Column = ({ status, onDrop, children }: inputProp) => {
         bgColor="black-gradient"
         label="Add new"
         handleClick={() => {
-          openModal("create", null)
-          if (status !== "") {
-            setDefaultTaskStatus(status)
-          }
+          openModal("create", null, status)
         }}
       />
-      <TaskModal />
     </div>
   )
 }

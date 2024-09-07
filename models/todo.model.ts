@@ -7,6 +7,7 @@ export interface ITodo extends Document {
   status: "todo" | "inprogress" | "inreview" | "finished"
   deadline: Date
   owner: string
+  content: string
 }
 
 const todoSchema: Schema = new Schema(
@@ -23,6 +24,7 @@ const todoSchema: Schema = new Schema(
     priority: {
       type: String,
       enum: ["low", "medium", "urgent"],
+      default: null,
     },
     status: {
       type: String,
@@ -36,6 +38,9 @@ const todoSchema: Schema = new Schema(
     owner: {
       type: String,
       required: true,
+    },
+    content: {
+      type: String,
     },
   },
   { timestamps: true }

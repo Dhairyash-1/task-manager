@@ -1,8 +1,10 @@
 export const ItemTypes = {
   TASK: "task",
 }
-export function formatDate(dateString: string) {
-  if (dateString === null) return null
+export const parseStringify = (value: any) => JSON.parse(JSON.stringify(value))
+
+export function formatDate(dateString: Date | string | null) {
+  if (dateString === null) return ""
   const date = new Date(dateString)
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, "0") // getMonth() returns 0-11
@@ -44,3 +46,8 @@ export function timeAgo(dateString: string): string {
     return `${years} year${years > 1 ? "s" : ""} ago`
   }
 }
+export const validPriorities: Array<"low" | "high" | "urgent"> = [
+  "low",
+  "high",
+  "urgent",
+]
