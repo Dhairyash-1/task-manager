@@ -26,7 +26,7 @@ const Page = async () => {
   return (
     <div className="bg-[#f2f2f2] flex w-full h-screen">
       <SideBar />
-      <div className="pl-4 pr-8 py-6 h-full flex-col flex-1">
+      <div className="pl-4 pr-8 py-6 h-full flex-col flex-1 overflow-y-scroll">
         <DashBoardHeader />
         <TaskBoard AllTasks={todos} />
       </div>

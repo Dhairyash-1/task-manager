@@ -58,10 +58,10 @@ const TaskModal = () => {
       try {
         setIsLoading(true)
         const data = await getTodoById({ id: taskId })
-        if (!data?.todo) {
+        if (!data) {
           throw new Error("No Todo found for given ID")
         }
-        const todo = data.todo
+        const todo = data
         console.log("todo", todo)
         const todoState = {
           title: todo.title,

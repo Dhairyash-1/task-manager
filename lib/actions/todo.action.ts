@@ -45,7 +45,7 @@ export const updateTodo = async (params: UpdateTodoParams) => {
     // const todo = await Todo.findById(id)
     const updatedTodo = await Todo.findOneAndUpdate({ _id: id }, updateData)
     revalidatePath(path)
-    return { updatedTodo }
+    return parseStringify(updatedTodo)
   } catch (error) {
     console.log(error)
   }
@@ -58,7 +58,7 @@ export const getTodoById = async (params: GetTodoByIdParams) => {
     if (!todo) {
       throw new Error("No Todo found for give ID")
     }
-    return { todo }
+    return parseStringify(todo)
   } catch (error) {
     console.log(error)
   }
@@ -69,7 +69,7 @@ export const deleteTodo = async (params: DeleteTodoParams) => {
     const { id, path } = params
     const deletedTodo = await Todo.findOneAndDelete({ id })
     revalidatePath(path)
-    return { deletedTodo }
+    return parseStringify(deletedTodo)
   } catch (error) {
     console.log(error)
   }

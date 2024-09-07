@@ -49,6 +49,7 @@ const Page = () => {
 
   return (
     <form
+      method="POST"
       onSubmit={handleSubmit(onSubmit)}
       className="primary-bg min-h-screen w-full flex justify-center items-start"
     >
