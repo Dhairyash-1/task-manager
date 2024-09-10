@@ -1,4 +1,6 @@
 import DashBoardHeader from "@/components/DashBoardHeader"
+import MobileNav from "@/components/MobileNav"
+
 import SideBar from "@/components/SideBar"
 import TaskBoard from "@/components/TaskBoard"
 import { getAllUserTodo } from "@/lib/actions/todo.action"
@@ -26,9 +28,10 @@ const Page = async () => {
   return (
     <div className="bg-[#f2f2f2] flex w-full h-screen">
       <SideBar />
-      <div className="pl-4 pr-8 py-6 h-full flex-col flex-1 overflow-y-scroll">
+      <div className="px-4 py-6 h-full flex-col relative flex-1 overflow-y-scroll">
         <DashBoardHeader />
         <TaskBoard AllTasks={todos} />
+        <MobileNav />
       </div>
     </div>
   )

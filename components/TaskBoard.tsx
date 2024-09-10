@@ -39,7 +39,7 @@ const TaskBoard = ({ AllTasks }: { AllTasks: Task[] }) => {
       <TaskActionBar />
       <DndProvider backend={HTML5Backend}>
         <div
-          className={`bg-white rounded-md p-4 flex gap-4 overflow-y-auto items-start
+          className={`bg-white rounded-md p-4  grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-start justify-center
             `}
         >
           <Column status="todo" onDrop={handleDrop}>

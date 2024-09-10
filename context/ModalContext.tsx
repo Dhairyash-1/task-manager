@@ -56,7 +56,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
   const openModal = (
     mode: "create" | "edit",
     taskId: string | null,
-    status: TStatus | undefined
+    status?: TStatus
   ) => {
     setModalMode(mode)
     setModalTaskId(taskId)

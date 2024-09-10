@@ -5,23 +5,34 @@ import Link from "next/link"
 import React from "react"
 import Card from "./Card"
 import { useUser } from "@/context/UserContext"
+import { Menu } from "lucide-react"
+import useUrlState from "@/hooks/useUrlState"
 
 const DashBoardHeader = () => {
   const { loading, user } = useUser()
+  const { updateUrl } = useUrlState()
+  const { searchParams } = useUrlState()
+  const value = searchParams.get("isMobile") === "true"
 
   return (
-    <div className="">
-      <div className="flex justify-between items-center w-full">
-        <h1 className="text-5xl font-semibold ">
+    <>
+      <div className="flex justify-between items-center gap-2 w-full">
+        <h1 className="xl:text-5xl text-center sm:text-start sm:text-2xl text-xl lg:text-4xl md:3xl font-semibold ">
           {loading ? "Loading..." : `Good morning, ${user && user.fullName}!`}
         </h1>
-        <Link href={"/help"} className="flex gap-2 items-center">
-          Help & feedback
-          <Image src="/question.png" width={24} height={24} alt="help button" />
+        <Link href={"/help"} className="sm:flex gap-2 items-center hidden">
+          <p className="text-sm hidden sm:block">Help & feedback</p>
+          <Image src="/question.png" width={16} height={16} alt="help button" />
         </Link>
+        <Menu
+          color="#606060"
+          size="30px"
+          className="sm:hidden"
+          onClick={() => updateUrl("isMobile", `${value ? "false" : "true"}`)}
+        />
       </div>
       {/*  */}
-      <div className="flex items-center gap-2 mt-4">
+      <div className="lg:flex flex-wrap hidden items-stretch justify-start md:flex-row gap-2 mt-4">
         {cardData.map((item) => (
           <Card
             key={item.title}
@@ -31,7 +42,7 @@ const DashBoardHeader = () => {
           />
         ))}
       </div>
-    </div>
+    </>
   )
 }
 

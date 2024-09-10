@@ -29,7 +29,7 @@ const Column = ({ status, onDrop, children }: inputProp) => {
   return (
     <div
       ref={drop as any}
-      className="flex flex-col justify-center w-[260px] gap-4 "
+      className="flex flex-col justify-center w-full gap-4 "
     >
       <div className="flex items-center justify-between mb-4">
         <h5 className="text-xl text-[#555555]">{title}</h5>

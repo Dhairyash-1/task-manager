@@ -1,3 +1,6 @@
+import LogoutButton from "@/components/LogoutButton"
+import { PlusIcon } from "lucide-react"
+
 const sideBarLinks = [
   {
     name: "Home",
@@ -123,5 +126,21 @@ const Tasks = [
     label: "Finished",
   },
 ]
+const sideBarDropdownOptions = [
+  {
+    label: "Notification",
+  },
+  { label: "Theme" },
+  {
+    label: "Logout",
+    customContent: <LogoutButton type="div" variant="dropdown" />,
+  },
+]
 
-export { sideBarLinks, cardData, taskBarActionBtn, Tasks }
+export {
+  sideBarLinks,
+  cardData,
+  taskBarActionBtn,
+  Tasks,
+  sideBarDropdownOptions,
+}

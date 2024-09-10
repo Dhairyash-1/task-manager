@@ -1,5 +1,13 @@
 "use client"
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react"
+import React, {
+  ChangeEvent,
+  RefObject,
+  use,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import Button from "./Button"
 import Image from "next/image"
 import CustomSelect from "./CustomInput"
@@ -38,7 +46,7 @@ const TaskModal = () => {
   const { user } = useUser()
 
   const path = usePathname()
-
+  const modalRef: RefObject<HTMLElement> = useRef(null)
   const [todoData, setTodoData] = useState<ITodosData>(initialTodoData)
   const [isLoading, setIsLoading] = useState(false)
   const [isMaximized, setIsMaximized] = useState(false)
@@ -146,17 +154,40 @@ const TaskModal = () => {
     })
   }
 
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        event.target instanceof HTMLElement &&
+        !modalRef.current.contains(event.target)
+      ) {
+        closeModal()
+      }
+    }
+
+    if (isModalOpen) {
+      document.addEventListener("mousedown", handleOutsideClick)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick)
+    }
+  }, [isModalOpen, closeModal])
+
   if (!isModalOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-600  bg-opacity-50  w-full flex items-center justify-center overflow-y-auto">
       {isLoading ? (
         <Loader />
       ) : (
         <>
           <div
-            className={`bg-white py-4 px-6 rounded-lg shadow-xl w-full ${
-              isMaximized ? "w-full h-screen" : "max-w-[670px]"
+            ref={modalRef as RefObject<HTMLDivElement>}
+            className={`custom-scrollbar bg-white py-4 px-6 rounded-lg shadow-xl w-full overflow-y-auto ${
+              isMaximized
+                ? "w-full h-full"
+                : "w-full md:max-w-[80%] lg:max-w-[800px]  h-auto max-h-[90%]"
             } `}
           >
             <div className="flex justify-between items-center mb-4">
@@ -172,9 +203,8 @@ const TaskModal = () => {
                   onClick={toggleMaximize}
                 />
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-end  gap-4">
                 <Button
-                  icon=""
                   label={modalMode === "create" ? "Add Task" : "Edit Task"}
                   onClick={
                     modalMode === "create" ? createTodoApi : updateTodoApi
@@ -184,7 +214,6 @@ const TaskModal = () => {
                 {/* <Button icon="/star.png" label="Favourite" /> */}
                 {modalMode === "edit" && (
                   <Button
-                    icon=""
                     onClick={() => {
                       if (modalTaskId !== null) {
                         deleteTodoApi(modalTaskId)
