@@ -61,21 +61,21 @@ const taskBarActionBtn = [
     label: "Calander View",
     icon: "/calander.png",
   },
-  {
-    id: 2,
-    label: "Automation",
-    icon: "/automation.png",
-  },
+  // {
+  //   id: 2,
+  //   label: "Automation",
+  //   icon: "/automation.png",
+  // },
   {
     id: 3,
     label: "Filter",
     icon: "/filter.png",
   },
-  {
-    id: 4,
-    label: "Share",
-    icon: "/share.png",
-  },
+  // {
+  //   id: 4,
+  //   label: "Share",
+  //   icon: "/share.png",
+  // },
 ]
 
 const Tasks = [

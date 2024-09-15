@@ -2,7 +2,6 @@
 import React, {
   ChangeEvent,
   RefObject,
-  use,
   useCallback,
   useEffect,
   useRef,
@@ -24,6 +23,15 @@ import {
 } from "@/lib/actions/todo.action"
 import { usePathname } from "next/navigation"
 import { useUser } from "@/context/UserContext"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select"
+import { Repeat } from "lucide-react"
+import RecurringTask from "./RecurringTask"
 interface ITodosData {
   title: string
   description: string
@@ -210,7 +218,7 @@ const TaskModal = () => {
                     modalMode === "create" ? createTodoApi : updateTodoApi
                   }
                 />
-                <Button icon="/share.png" label="Share" />
+                {/* <Button icon="/share.png" label="Share" /> */}
                 {/* <Button icon="/star.png" label="Favourite" /> */}
                 {modalMode === "edit" && (
                   <Button
@@ -240,7 +248,7 @@ const TaskModal = () => {
                 }
               />
               {/* Section for Select Inputs */}
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-6 justify-start">
                 {[
                   {
                     type: "select",
@@ -274,15 +282,31 @@ const TaskModal = () => {
                     value: todoData.deadline,
                     field: "deadline",
                   },
+                  // {
+                  //   type: "select",
+                  //   label: "Recurring",
+                  //   icon: <Repeat height={24} width={24} color="#797979" />,
+                  //   value: "",
+                  //   field: "recurring",
+                  //   options: [
+                  //     { value: "daily", label: "Daily" },
+                  //     { value: "weekly", label: "Weekly" },
+                  //     { value: "monthly", label: "Monthly" },
+                  //   ],
+                  // },
                 ].map(({ type, label, icon, value, field, options }) => (
-                  <div className="flex items-center" key={label}>
-                    <div className="flex items-center gap-6 mr-[60px]">
-                      <Image src={icon} width={24} height={24} alt={label} />
+                  <div className="grid  grid-cols-4 gap-4" key={label}>
+                    <div className="flex items-center gap-6">
+                      {typeof icon === "string" ? (
+                        <Image src={icon} width={24} height={24} alt={label} />
+                      ) : (
+                        icon // @ts-ignore
+                      )}
                       <label className="text-[#666666] font-normal text-base">
                         {label}
                       </label>
                     </div>
-                    <div className="flex-1">
+                    <div className="col-span-3">
                       <CustomSelect
                         type={type as "select" | "date"}
                         options={options}
@@ -295,10 +319,11 @@ const TaskModal = () => {
                     </div>
                   </div>
                 ))}
+                <RecurringTask onChange={() => {}} />
 
-                <div className="flex items-center">
+                <div className="grid grid-cols-4">
                   <div
-                    className={`flex items-center gap-6 mr-[60px]
+                    className={`col-span-1 flex items-center gap-6 
                     }`}
                   >
                     <Image
@@ -312,7 +337,7 @@ const TaskModal = () => {
                     </label>
                   </div>
                   <input
-                    className=" w-full border-none outline-none shadow-none font p-2  placeholder:text-[#cccccc] rounded"
+                    className="w-full col-span-3 border-none outline-none shadow-none font p-2  placeholder:text-[#cccccc] rounded"
                     type="text"
                     placeholder="Write task description"
                     value={todoData.description}
@@ -325,20 +350,14 @@ const TaskModal = () => {
                   />
                 </div>
               </div>
-              {/* custom prop button */}
-              <div className="flex items-center gap-6">
-                <Image src="/plusicon.png" width={24} height={25} alt="add" />
-                <button className="bg-transparent outline-none border-none text-base">
-                  Add Custom Property
-                </button>
-              </div>
+
               {/* horizontal line */}
               <div className="bg-[#dddddd] border w-full my-8"></div>
               {/* Additional Content */}
             </div>
             <AutoResizeTextarea
               value={todoData.content}
-              placeholder="Start writing, or drag your own files here."
+              placeholder="Start writing here."
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setTodoData((prevData) => ({
                   ...prevData,

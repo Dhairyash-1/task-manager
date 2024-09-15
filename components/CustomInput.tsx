@@ -54,7 +54,7 @@ const CustomSelect: React.FC<InputProps> = ({
     return (
       <div ref={selectRef} className="relative w-full">
         <div
-          className={`bg-transparent p-2 rounded border-none outline-none cursor-pointer select-none w-full ${
+          className={`bg-transparent py-2 rounded border-none outline-none cursor-pointer select-none w-full ${
             selected ? "text-black" : "text-[#cccccc]"
           }`}
           onClick={() => setIsOpen(!isOpen)}
@@ -82,7 +82,7 @@ const CustomSelect: React.FC<InputProps> = ({
     return (
       <input
         type="date"
-        className="bg-transparent p-2 rounded border-none outline-none cursor-pointer w-full text-black placeholder:text-[#cccccc]"
+        className="bg-transparent py-2 rounded border-none outline-none cursor-pointer w-full text-black placeholder:text-[#cccccc]"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={value}

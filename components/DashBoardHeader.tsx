@@ -7,6 +7,7 @@ import Card from "./Card"
 import { useUser } from "@/context/UserContext"
 import { Menu } from "lucide-react"
 import useUrlState from "@/hooks/useUrlState"
+import FilterSortModal from "./FilterSortModal"
 
 const DashBoardHeader = () => {
   const { loading, user } = useUser()
@@ -42,6 +43,7 @@ const DashBoardHeader = () => {
           />
         ))}
       </div>
+      {/* <FilterSortModal /> */}
     </>
   )
 }

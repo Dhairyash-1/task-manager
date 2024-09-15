@@ -78,11 +78,11 @@ const SideBar = () => {
       <div className="lg:mt-4 mt-8 flex flex-col gap-3 lg:gap-2">
         <SideBarNavLinks />
         <TaskButton
-          size="large"
+          size="medium"
           bgColor="blue-gradient"
-          label="Create Task"
+          label="Create New Task"
           handleClick={() => openModal("create", null)}
-          className="w-full text-sm"
+          className="flex items-center justify-between "
         />
       </div>
     </div>
