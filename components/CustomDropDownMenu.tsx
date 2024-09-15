@@ -1,3 +1,4 @@
+"use client"
 import React from "react"
 import {
   DropdownMenu,
@@ -31,7 +32,7 @@ const CustomDropDownMenu = ({
   hideAboveWidth = 1024,
 }: CustomDropDownMenuProps) => {
   const { width } = useWindowSize()
-
+  if (width === undefined) return null
   if (hideAboveWidth <= width) return null
   return (
     <DropdownMenu>
