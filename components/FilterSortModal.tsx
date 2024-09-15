@@ -22,11 +22,20 @@ import { DatePicker } from "@/components/ui/date-picker" // Assuming you have th
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 
+type Section = "status" | "priority" | "dueDate" | "tags" | "assignee"
+interface ExpandedSections {
+  status: boolean
+  priority: boolean
+  dueDate: boolean
+  tags: boolean
+  assignee: boolean
+}
+
 export default function FilterSortModal({
   isOpen = true,
   onClose = () => (isOpen = false),
 }) {
-  const [expandedSections, setExpandedSections] = useState({
+  const [expandedSections, setExpandedSections] = useState<ExpandedSections>({
     status: true,
     priority: false,
     dueDate: false,
@@ -34,7 +43,7 @@ export default function FilterSortModal({
     assignee: false,
   })
 
-  const toggleSection = (section: any) => {
+  const toggleSection = (section: Section) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }))
   }
 

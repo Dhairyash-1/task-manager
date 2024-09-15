@@ -31,5 +31,9 @@ interface DeleteTodoParams {
   id: string
   path: string
 }
+interface SearchTodoParams {
+  userId: string
+  query: string
+}
 type TStatus = "todo" | "inprogress" | "inreview" | "finished"
 type TPriority = "low" | "high" | "urgent"

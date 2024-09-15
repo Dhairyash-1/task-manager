@@ -1,15 +1,16 @@
 import { Repeat } from "lucide-react"
 import React, { useState, useEffect } from "react"
 
+type RecurrenceType = "off" | "daily" | "weekly" | "monthly"
+
 interface RecurringTaskProps {
-  defaultRecurrence?: "daily" | "weekly" | "monthly"
+  defaultRecurrence?: RecurrenceType
   defaultDayOfWeek?: string
   defaultDateOfMonth?: number
   onChange: (recurrence: RecurrenceState) => void
 }
-
 interface RecurrenceState {
-  frequency: "daily" | "weekly" | "monthly"
+  frequency: RecurrenceType
   dayOfWeek?: string
   dateOfMonth?: number
 }
@@ -20,9 +21,8 @@ const RecurringTask: React.FC<RecurringTaskProps> = ({
   defaultDateOfMonth,
   onChange,
 }) => {
-  const [frequency, setFrequency] = useState<"daily" | "weekly" | "monthly">(
-    defaultRecurrence
-  )
+  const [frequency, setFrequency] = useState<RecurrenceType>(defaultRecurrence)
+
   const [dayOfWeek, setDayOfWeek] = useState<string | undefined>(
     defaultDayOfWeek
   )

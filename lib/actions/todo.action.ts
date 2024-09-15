@@ -67,9 +67,24 @@ export const deleteTodo = async (params: DeleteTodoParams) => {
   try {
     connectDB()
     const { id, path } = params
-    const deletedTodo = await Todo.findOneAndDelete({ id })
+
+    const deletedTodo = await Todo.findOneAndDelete({ _id: id })
     revalidatePath(path)
     return parseStringify(deletedTodo)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const searchTodo = async (params: SearchTodoParams) => {
+  try {
+    connectDB()
+    const { query, userId } = params
+    const todo = await Todo.find({
+      owner: userId,
+      title: { $regex: query, $options: "i" },
+    })
+    return parseStringify(todo)
   } catch (error) {
     console.log(error)
   }

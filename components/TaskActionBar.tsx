@@ -1,13 +1,17 @@
 import { taskBarActionBtn } from "@/lib/constant"
 import Image from "next/image"
-import React from "react"
+import React, { Dispatch, SetStateAction } from "react"
 import Button from "./Button"
 import TaskButton from "./TaskButton"
 import { useModal } from "@/context/ModalContext"
 import { EllipsisVertical, PlusIcon } from "lucide-react"
 import CustomDropDownMenu from "./CustomDropDownMenu"
 
-const TaskActionBar = () => {
+const TaskActionBar = ({
+  handleQuery,
+}: {
+  handleQuery: Dispatch<SetStateAction<string>>
+}) => {
   const { openModal } = useModal()
 
   return (
@@ -17,6 +21,7 @@ const TaskActionBar = () => {
           type="text"
           placeholder="Search"
           className="bg-transparent border-none outline-none shadow-none w-full text-base"
+          onChange={(e) => handleQuery(e.target.value)}
         />
         <Image src={"/search.png"} width={24} height={24} alt="search bar" />
       </div>

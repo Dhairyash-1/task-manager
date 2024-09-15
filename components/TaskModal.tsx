@@ -225,6 +225,7 @@ const TaskModal = () => {
                     onClick={() => {
                       if (modalTaskId !== null) {
                         deleteTodoApi(modalTaskId)
+                        handleModalClose()
                       }
                     }}
                     label="Delete"
