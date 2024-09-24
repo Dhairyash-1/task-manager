@@ -32,7 +32,6 @@ const Page = () => {
       if (res.status === 200) {
         refreshSession()
         router.push("/")
-        reset()
       }
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
