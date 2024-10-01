@@ -2,10 +2,10 @@ import { connectDB } from "@/config"
 import Todo, { ITodo } from "@/models/todo.model"
 import { NextRequest, NextResponse } from "next/server"
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   try {
     connectDB()
-
+    console.log("started execute cron job")
     const recurringTodos = await Todo.find({ isRecurring: true })
 
     if (!recurringTodos || recurringTodos.length === 0) {
@@ -19,10 +19,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
     for (const todo of recurringTodos) {
       await processRecurringTodo(todo, now)
     }
+    console.log("finish execute cron job")
 
-    return NextResponse.json({
-      message: "Recurring tasks processed successfully",
-    })
+    return NextResponse.json(
+      {
+        message: "Recurring tasks processed successfully",
+      },
+      { status: 200 }
+    )
   } catch (error) {
     console.log("Error in creating recurring task", error)
   }
@@ -52,8 +56,10 @@ async function processRecurringTodo(todo: ITodo, now: Date) {
 }
 
 async function executeTodo(todo: ITodo) {
+  const newTask = todo.toObject()
+  delete newTask._id
   await Todo.create({
-    ...todo.toObject(),
+    ...newTask,
     isRecurring: false,
     day: undefined,
     date: undefined,
