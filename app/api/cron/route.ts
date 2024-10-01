@@ -58,6 +58,9 @@ async function processRecurringTodo(todo: ITodo, now: Date) {
 async function executeTodo(todo: ITodo) {
   const newTask = todo.toObject()
   delete newTask._id
+  delete newTask.createdAt
+  delete newTask.updatedAt
+
   await Todo.create({
     ...newTask,
     isRecurring: false,
