@@ -7,6 +7,10 @@ interface CreateTodoParams {
   content?: string
   path: string
   owner: string
+  frequency: "DAILY" | "WEEKLY" | "MONTHLY" | "NONE"
+  day?: number
+  date?: number
+  isRecurring: boolean
 }
 interface GetTodoByIdParams {
   id: string

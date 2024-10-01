@@ -32,6 +32,8 @@ import {
 } from "./ui/select"
 import { Repeat } from "lucide-react"
 import RecurringTask from "./RecurringTask"
+
+export type TFrequency = "DAILY" | "WEEKLY" | "MONTHLY" | "NONE"
 interface ITodosData {
   title: string
   description: string
@@ -39,6 +41,10 @@ interface ITodosData {
   priority: TPriority | undefined
   deadline: string
   content: string
+  isRecurring: boolean
+  frequency: TFrequency
+  day?: number
+  date?: number
 }
 const initialTodoData = {
   title: "",
@@ -47,6 +53,10 @@ const initialTodoData = {
   priority: undefined,
   deadline: "",
   content: "",
+  isRecurring: false,
+  frequency: "NONE",
+  day: undefined,
+  date: undefined,
 } as ITodosData
 
 const TaskModal = () => {
@@ -86,6 +96,10 @@ const TaskModal = () => {
           priority: todo.priority as TPriority,
           deadline: formatDate(todo.deadline),
           content: todo.content,
+          frequency: todo.frequency,
+          day: todo.day,
+          date: todo.date,
+          isRecurring: todo.isRecurring,
         }
         setTodoData(todoState)
       } catch (error) {
@@ -123,6 +137,10 @@ const TaskModal = () => {
       content: todoData.content,
       path: path,
       owner: user?.id as string,
+      frequency: todoData.frequency,
+      day: todoData.day,
+      date: todoData.date,
+      isRecurring: todoData.isRecurring,
     }
     await createTodo(createTodoData)
     closeModal()
@@ -141,6 +159,10 @@ const TaskModal = () => {
       deadline: todoData.deadline,
       content: todoData.content,
       owner: user?.id as string,
+      frequency: todoData.frequency,
+      day: todoData.day,
+      date: todoData.date,
+      isRecurring: todoData.isRecurring,
     }
     await updateTodo({ id: modalTaskId as string, updateData, path })
     closeModal()
@@ -153,6 +175,32 @@ const TaskModal = () => {
   const deleteTodoApi = async (id: string) => {
     await deleteTodo({ id: id, path: path })
   }
+
+  const handleRecurringTaskTime = useCallback(
+    ({
+      frequency,
+      dayOfWeek,
+      dateOfMonth,
+    }: {
+      frequency: TFrequency
+      dayOfWeek?: number
+      dateOfMonth?: number
+    }) => {
+      let recurring = false
+      if (frequency !== "NONE") {
+        recurring = true
+      }
+      // if (dayofweek === 0 || dayofmonth === 0) return
+      setTodoData((prevTodo) => ({
+        ...prevTodo,
+        frequency: frequency,
+        day: dayOfWeek,
+        date: dateOfMonth,
+        isRecurring: recurring,
+      }))
+    },
+    []
+  )
 
   function handleModalClose() {
     closeModal()
@@ -320,7 +368,12 @@ const TaskModal = () => {
                     </div>
                   </div>
                 ))}
-                <RecurringTask onChange={() => {}} />
+                <RecurringTask
+                  defaultRecurrence={todoData.frequency}
+                  defaultDayOfWeek={todoData.day}
+                  defaultDateOfMonth={todoData.date}
+                  onChange={handleRecurringTaskTime}
+                />
 
                 <div className="grid grid-cols-4">
                   <div

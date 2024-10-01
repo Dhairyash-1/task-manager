@@ -1,29 +1,37 @@
 import { Repeat } from "lucide-react"
 import React, { useState, useEffect } from "react"
 
-type RecurrenceType = "off" | "daily" | "weekly" | "monthly"
-
+const WEEKDAYS = [
+  { dayNumber: 1, dayName: "Monday" },
+  { dayNumber: 2, dayName: "Tuesday" },
+  { dayNumber: 3, dayName: "Wednesday" },
+  { dayNumber: 4, dayName: "Thursday" },
+  { dayNumber: 5, dayName: "Friday" },
+  { dayNumber: 6, dayName: "Saturday" },
+  { dayNumber: 7, dayName: "Sunday" },
+]
+type RecurrenceType = "NONE" | "DAILY" | "WEEKLY" | "MONTHLY"
 interface RecurringTaskProps {
   defaultRecurrence?: RecurrenceType
-  defaultDayOfWeek?: string
+  defaultDayOfWeek?: number
   defaultDateOfMonth?: number
   onChange: (recurrence: RecurrenceState) => void
 }
 interface RecurrenceState {
   frequency: RecurrenceType
-  dayOfWeek?: string
+  dayOfWeek?: number
   dateOfMonth?: number
 }
 
 const RecurringTask: React.FC<RecurringTaskProps> = ({
-  defaultRecurrence = "off",
+  defaultRecurrence = "NONE",
   defaultDayOfWeek,
   defaultDateOfMonth,
   onChange,
 }) => {
   const [frequency, setFrequency] = useState<RecurrenceType>(defaultRecurrence)
 
-  const [dayOfWeek, setDayOfWeek] = useState<string | undefined>(
+  const [dayOfWeek, setDayOfWeek] = useState<number | undefined>(
     defaultDayOfWeek
   )
   const [dateOfMonth, setDateOfMonth] = useState<number | undefined>(
@@ -33,21 +41,21 @@ const RecurringTask: React.FC<RecurringTaskProps> = ({
   useEffect(() => {
     onChange({
       frequency,
-      dayOfWeek: frequency === "weekly" ? dayOfWeek : undefined,
-      dateOfMonth: frequency === "monthly" ? dateOfMonth : undefined,
+      dayOfWeek: frequency === "WEEKLY" ? dayOfWeek : undefined,
+      dateOfMonth: frequency === "MONTHLY" ? dateOfMonth : undefined,
     })
-  }, [frequency, dayOfWeek, dateOfMonth])
+  }, [frequency, dayOfWeek, dateOfMonth, onChange])
 
   const handleFrequencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFrequency(e.target.value as "daily" | "weekly" | "monthly")
+    setFrequency(e.target.value as "DAILY" | "WEEKLY" | "MONTHLY")
   }
 
   const handleDayOfWeekChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDayOfWeek(e.target.value)
+    setDayOfWeek(Number(e.target.value))
   }
 
   const handleDateOfMonthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDateOfMonth(Number(e.target.value))
+    setDateOfMonth((prev) => Number(e.target.value)) // Using the callback to ensure proper state update
   }
 
   return (
@@ -63,36 +71,28 @@ const RecurringTask: React.FC<RecurringTaskProps> = ({
           value={frequency}
           onChange={handleFrequencyChange}
         >
-          <option value="off">No repeat</option>
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
+          <option value="NONE">No repeat</option>
+          <option value="DAILY">Daily</option>
+          <option value="WEEKLY">Weekly</option>
+          <option value="MONTHLY">Monthly</option>
         </select>
       </div>
 
       {/* Day of Week Selector */}
-      {frequency === "weekly" && (
+      {frequency === "WEEKLY" && (
         <div className="flex flex-col gap-2">
           <label className="text-gray-700">Repeat On</label>
           <div className="flex gap-4">
-            {[
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
-              "Saturday",
-              "Sunday",
-            ].map((day) => (
-              <label key={day} className="flex items-center gap-2">
+            {WEEKDAYS.map((day) => (
+              <label key={day.dayNumber} className="flex items-center gap-2">
                 <input
                   type="radio"
                   name="dayOfWeek"
-                  value={day}
-                  checked={dayOfWeek === day}
+                  value={day.dayNumber}
+                  checked={dayOfWeek === day.dayNumber}
                   onChange={handleDayOfWeekChange}
                 />
-                {day}
+                {day.dayName}
               </label>
             ))}
           </div>
@@ -100,7 +100,7 @@ const RecurringTask: React.FC<RecurringTaskProps> = ({
       )}
 
       {/* Date of Month Selector */}
-      {frequency === "monthly" && (
+      {frequency === "MONTHLY" && (
         <div className="flex items-center gap-4">
           <label className="text-gray-700">Repeat On Date</label>
           <input
@@ -108,7 +108,7 @@ const RecurringTask: React.FC<RecurringTaskProps> = ({
             type="number"
             min="1"
             max="31"
-            value={dateOfMonth || ""}
+            value={dateOfMonth}
             onChange={handleDateOfMonthChange}
             placeholder="1-31"
           />

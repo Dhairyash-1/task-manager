@@ -1,5 +1,5 @@
 import mongoose, { Document, Model, Schema } from "mongoose"
-
+const frequencyEnum = ["DAILY", "WEEKLY", "MONTHLY", "NONE"]
 export interface ITodo extends Document {
   title: string
   description: string
@@ -8,6 +8,10 @@ export interface ITodo extends Document {
   deadline: Date
   owner: string
   content: string
+  isRecurring: Boolean
+  frequency?: "DAILY" | "WEEKLY" | "MONTHLY" | "NONE"
+  day?: Number
+  date?: Number
 }
 
 const todoSchema: Schema = new Schema(
@@ -41,6 +45,23 @@ const todoSchema: Schema = new Schema(
     },
     content: {
       type: String,
+    },
+    isRecurring: {
+      type: Boolean,
+      default: false,
+    },
+    frequency: {
+      type: String,
+      enum: frequencyEnum,
+      default: "NONE",
+    },
+    day: {
+      type: Number,
+      default: undefined,
+    },
+    date: {
+      type: Number,
+      default: undefined,
     },
   },
   { timestamps: true }

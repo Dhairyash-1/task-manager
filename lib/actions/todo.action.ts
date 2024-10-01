@@ -17,8 +17,19 @@ export const getAllUserTodo = async (params: GetAllUserTodoParams) => {
 export const createTodo = async (params: CreateTodoParams) => {
   try {
     connectDB()
-    const { title, status, deadline, description, priority, path, owner } =
-      params
+    const {
+      title,
+      status,
+      deadline,
+      description,
+      priority,
+      path,
+      owner,
+      frequency,
+      day,
+      date,
+      isRecurring,
+    } = params
     if (!title || !status) {
       throw new Error("Title and status is required to create todo")
     }
@@ -29,6 +40,10 @@ export const createTodo = async (params: CreateTodoParams) => {
       description: description || "",
       priority: priority || null,
       owner: owner,
+      frequency,
+      day,
+      date,
+      isRecurring,
     })
     await todo.save()
     revalidatePath(path)
