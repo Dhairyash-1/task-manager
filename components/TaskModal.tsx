@@ -22,7 +22,7 @@ import {
   updateTodo,
 } from "@/lib/actions/todo.action"
 import { usePathname } from "next/navigation"
-import { useUser } from "@/context/UserContext"
+import { useAuth } from "@/context/AuthContext"
 import {
   Select,
   SelectContent,
@@ -61,7 +61,7 @@ const initialTodoData = {
 
 const TaskModal = () => {
   const { modalTaskId, modalMode, isModalOpen, closeModal, status } = useModal()
-  const { user } = useUser()
+  const { user } = useAuth()
 
   const path = usePathname()
   const modalRef: RefObject<HTMLElement> = useRef(null)

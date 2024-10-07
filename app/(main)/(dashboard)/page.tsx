@@ -26,13 +26,10 @@ const Page = async () => {
   const todos = await getAllUserTodo({ userId: currentUser.user.id })
 
   return (
-    <div className="bg-[#f2f2f2] flex w-full h-screen">
-      <SideBar />
-      <div className="px-4 py-6 h-full flex-col relative flex-1 overflow-y-scroll">
-        <DashBoardHeader />
-        <TaskBoard AllTasks={todos} />
-        <MobileNav />
-      </div>
+    <div className="px-4 py-6 h-full flex-col relative flex-1 overflow-y-scroll">
+      <DashBoardHeader />
+      <TaskBoard AllTasks={todos} />
+      <MobileNav />
     </div>
   )
 }

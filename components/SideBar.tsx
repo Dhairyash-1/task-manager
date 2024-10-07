@@ -8,7 +8,7 @@ import { usePathname, useRouter } from "next/navigation"
 import React, { useState } from "react"
 import TaskButton from "./TaskButton"
 import { useModal } from "@/context/ModalContext"
-import { useUser } from "@/context/UserContext"
+import { useAuth } from "@/context/AuthContext"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,10 +22,11 @@ import SideBarNavLinks from "./SideBarNavLinks"
 
 const SideBar = () => {
   const { openModal } = useModal()
-  const { user, loading, setUser } = useUser()
+  const { user, isAuthLoading, isActionLoading } = useAuth()
+  console.log("user", user)
 
   return (
-    <div className="xl:w-[250px] lg:w-[220px] max-lg:w-fit pt-6 px-4 bg-white min-h-screen hidden sm:flex flex-col">
+    <aside className="xl:w-[250px] lg:w-[220px] max-lg:w-fit pt-6 px-4 bg-white min-h-screen hidden sm:flex flex-col">
       <header>
         <div className="flex gap-2 justify-center lg:justify-start">
           <Image
@@ -50,7 +51,7 @@ const SideBar = () => {
           </CustomDropDownMenu>
 
           <h2 className="text-[#080808] max-lg:hidden font-medium text-xl line-clamp-1">
-            {loading ? "Loading..." : user?.fullName}
+            {isAuthLoading || isActionLoading ? "Loading..." : user?.fullName}
           </h2>
         </div>
         <div className="flex justify-between items-center mt-2 max-lg:hidden">
@@ -85,7 +86,7 @@ const SideBar = () => {
           className="flex items-center justify-between "
         />
       </div>
-    </div>
+    </aside>
   )
 }
 

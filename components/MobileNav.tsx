@@ -7,13 +7,13 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import CustomDropDownMenu from "./CustomDropDownMenu"
-import { useUser } from "@/context/UserContext"
+import { useAuth } from "@/context/AuthContext"
 
 const MobileNav = () => {
   const { searchParams, updateUrl } = useUrlState()
   const pathname = usePathname()
   const isMobile = searchParams.get("isMobile")
-  const { user, loading } = useUser()
+  const { user, isActionLoading, isAuthLoading } = useAuth()
   console.log("isMobile", isMobile)
   return (
     <div
@@ -35,7 +35,7 @@ const MobileNav = () => {
           />
         </CustomDropDownMenu>
         <h2 className="text-[#080808]  font-medium text-xl line-clamp-1">
-          {loading ? "Loading..." : user?.fullName}
+          {isActionLoading || isAuthLoading ? "Loading..." : user?.fullName}
         </h2>
       </div>
       {sideBarLinks.map((item) => {

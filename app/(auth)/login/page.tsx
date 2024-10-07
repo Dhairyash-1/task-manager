@@ -1,19 +1,18 @@
 "use client"
+import { useAuth } from "@/context/AuthContext"
 import Image from "next/image"
 import Link from "next/link"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import type { FieldValues } from "react-hook-form"
-import axios from "axios"
-import { useRouter } from "next/navigation"
-import { useUser } from "@/context/UserContext"
 
 const Page = () => {
   const [showPassword, setShowPassword] = useState(false)
-  const [apiError, setApiError] = useState({ status: false, message: "" })
-  const [isLoading, setIsLoading] = useState(false)
-  const { refreshSession, setUser } = useUser()
-  const router = useRouter()
+  // const [apiError, setApiError] = useState({ status: false, message: "" })
+  // const [isLoading, setIsLoading] = useState(false)
+  // const { refreshSession, setIsAuthenticated } = useUser()
+  // const router = useRouter()
+  const { login, isActionLoading, loginError } = useAuth()
   const {
     register,
     reset,
@@ -26,24 +25,7 @@ const Page = () => {
   }
 
   async function onSubmit(data: FieldValues) {
-    try {
-      setIsLoading(true)
-      const res = await axios.post("/api/users/login", data)
-      if (res.status === 200) {
-        refreshSession()
-        router.push("/")
-      }
-    } catch (error: any) {
-      if (axios.isAxiosError(error) && error.response) {
-        const errorMessage =
-          error.response.data?.error || "Something went wrong"
-        setApiError({ status: true, message: errorMessage })
-      } else {
-        setApiError({ status: true, message: "An unexpected error occurred." })
-      }
-    } finally {
-      setIsLoading(false)
-    }
+    login(data)
   }
 
   return (
@@ -119,13 +101,11 @@ const Page = () => {
             disabled={isSubmitting}
             className="w-full blue-gradient opacity-65  text-white py-3 mt-6 rounded-md shadow-lg hover:opacity-90  transition duration-300"
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {isActionLoading ? "Logging in..." : "Login"}
           </button>
         </div>
-        {apiError.status && (
-          <p className="text-red-500 text-xl mt-2 text-start">
-            {apiError.message}
-          </p>
+        {loginError && (
+          <p className="text-red-500 text-xl mt-2 text-start">{loginError}</p>
         )}
         <p className="text-xl mt-8 text-[#606060]">
           Don&apos;t have an account? Create a{" "}

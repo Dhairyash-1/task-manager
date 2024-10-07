@@ -8,7 +8,7 @@ import { HTML5Backend } from "react-dnd-html5-backend"
 import { searchTodo, updateTodo } from "@/lib/actions/todo.action"
 import { usePathname } from "next/navigation"
 import TaskModal from "./TaskModal"
-import { useUser } from "@/context/UserContext"
+import { useAuth } from "@/context/AuthContext"
 import useDebounce from "@/hooks/useDebounce"
 interface Task {
   _id: string
@@ -23,7 +23,7 @@ interface Task {
 
 const TaskBoard = ({ AllTasks }: { AllTasks: Task[] }) => {
   const path = usePathname()
-  const { user } = useUser()
+  const { user } = useAuth()
   const [query, setQuery] = useState<string>("")
   const debouncedQuery = useDebounce(query)
   const [searchResult, setSearchResult] = useState<Task[]>([])

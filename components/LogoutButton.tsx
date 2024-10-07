@@ -1,5 +1,4 @@
-import axios from "axios"
-import { useRouter } from "next/navigation"
+import { useAuth } from "@/context/AuthContext"
 import React, { useState, ReactNode } from "react"
 
 interface LogoutButtonProps {
@@ -17,8 +16,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
   children,
   onClick,
 }) => {
-  const router = useRouter()
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const { logout, isActionLoading } = useAuth()
 
   // Default logout handler
   const handleLogout = async () => {
@@ -26,18 +24,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
       onClick()
       return
     }
-
-    try {
-      setIsLoggingOut(true)
-      const res = await axios.post("/api/users/logout")
-      if (res.status === 200) {
-        router.refresh()
-      }
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setIsLoggingOut(false)
-    }
+    logout()
   }
 
   const Element = type === "button" ? "button" : "div"
@@ -53,7 +40,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
       onClick={handleLogout}
       className={`${baseStyles} ${className}`} // Combine base styles and custom className
     >
-      {isLoggingOut ? "Logging out..." : children || "Logout"}
+      {isActionLoading ? "Logging out..." : children || "Logout"}
     </Element>
   )
 }

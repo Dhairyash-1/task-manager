@@ -4,13 +4,13 @@ import Image from "next/image"
 import Link from "next/link"
 import React from "react"
 import Card from "./Card"
-import { useUser } from "@/context/UserContext"
+import { useAuth } from "@/context/AuthContext"
 import { Menu } from "lucide-react"
 import useUrlState from "@/hooks/useUrlState"
 import FilterSortModal from "./FilterSortModal"
 
 const DashBoardHeader = () => {
-  const { loading, user } = useUser()
+  const { isAuthLoading, isActionLoading, user } = useAuth()
   const { updateUrl } = useUrlState()
   const { searchParams } = useUrlState()
   const value = searchParams.get("isMobile") === "true"
@@ -19,7 +19,9 @@ const DashBoardHeader = () => {
     <>
       <div className="flex justify-between items-center gap-2 w-full">
         <h1 className="xl:text-5xl text-center sm:text-start sm:text-2xl text-xl lg:text-4xl md:3xl font-semibold ">
-          {loading ? "Loading..." : `Good morning, ${user && user.fullName}!`}
+          {isAuthLoading || isActionLoading
+            ? "Loading..."
+            : `Good morning, ${user && user?.fullName}!`}
         </h1>
         <Link href={"/help"} className="sm:flex gap-2 items-center hidden">
           <p className="text-sm hidden sm:block">Help & feedback</p>
