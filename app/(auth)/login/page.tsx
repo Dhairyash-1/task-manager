@@ -8,10 +8,6 @@ import type { FieldValues } from "react-hook-form"
 
 const Page = () => {
   const [showPassword, setShowPassword] = useState(false)
-  // const [apiError, setApiError] = useState({ status: false, message: "" })
-  // const [isLoading, setIsLoading] = useState(false)
-  // const { refreshSession, setIsAuthenticated } = useUser()
-  // const router = useRouter()
   const { login, isActionLoading, loginError } = useAuth()
   const {
     register,

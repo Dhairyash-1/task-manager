@@ -6,6 +6,7 @@ import { Metadata } from "next"
 import { Inter } from "next/font/google"
 import React from "react"
 import { ToastContainer } from "react-toastify"
+import "../../lib/cronJob"
 
 const inter = Inter({ subsets: ["latin"] })
 

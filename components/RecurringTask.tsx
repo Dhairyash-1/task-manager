@@ -8,7 +8,7 @@ const WEEKDAYS = [
   { dayNumber: 4, dayName: "Thursday" },
   { dayNumber: 5, dayName: "Friday" },
   { dayNumber: 6, dayName: "Saturday" },
-  { dayNumber: 7, dayName: "Sunday" },
+  { dayNumber: 0, dayName: "Sunday" },
 ]
 type RecurrenceType = "NONE" | "DAILY" | "WEEKLY" | "MONTHLY"
 interface RecurringTaskProps {

@@ -22,13 +22,17 @@ const SideBarNavLinks = () => {
               isActive && "bg-[#f4f4f4] link-border"
             }`}
           >
-            <Image
-              src={item.src}
-              width={24}
-              height={24}
-              alt={item.value}
-              className="max-lg:mx-auto"
-            />
+            {typeof item.src === "string" ? (
+              <Image
+                src={item.src}
+                width={24}
+                height={24}
+                alt={item.value}
+                className="max-lg:mx-auto"
+              />
+            ) : (
+              item.src
+            )}
             <p className="ml-[14px] hidden lg:block text-[#797979]">
               {item.name}
             </p>

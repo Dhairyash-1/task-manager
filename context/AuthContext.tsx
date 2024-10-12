@@ -75,9 +75,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         credentials: "include",
       })
       if (res.status === 200) {
+        router.push("/login")
         setIsAuthenticated(false)
         setUser(null)
-        router.push("/login")
       } else {
         // Optionally, handle error states or display messages to the user
         console.log("Logout failed")
@@ -102,9 +102,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
       if (res.status === 200) {
         const responseData = await res.json()
+        router.push("/")
         setUser(responseData.data)
         setIsAuthenticated(true)
-        router.push("/")
         console.log("Login successful:", responseData)
       } else {
         const errorData = await res.json()

@@ -1,5 +1,5 @@
 import LogoutButton from "@/components/LogoutButton"
-import { PlusIcon } from "lucide-react"
+import { PlusIcon, Repeat } from "lucide-react"
 
 const sideBarLinks = [
   {
@@ -13,6 +13,12 @@ const sideBarLinks = [
     value: "boards",
     src: "/boards.png",
     url: "/boards",
+  },
+  {
+    name: "Recurring Task",
+    value: "recurringtask",
+    src: <Repeat className="h-6 w-6" color="#939393" />,
+    url: "/recurring-task",
   },
   {
     name: "Settings",

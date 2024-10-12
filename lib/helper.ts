@@ -51,3 +51,26 @@ export const validPriorities: Array<"low" | "high" | "urgent"> = [
   "high",
   "urgent",
 ]
+
+type TdayofWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6
+
+// timezone
+export function convertDayOfWeekToUTC(localDayOfWeek: number): number {
+  const currentDate = new Date()
+
+  // Clone current date to avoid side-effects
+  const adjustedDate = new Date(currentDate)
+
+  // Set the date to match the local day of the week
+  adjustedDate.setDate(
+    currentDate.getDate() + (localDayOfWeek - currentDate.getDay())
+  )
+
+  // Convert adjusted date to UTC by applying timezone offset
+  const utcEquivalentDate = new Date(
+    adjustedDate.getTime() + adjustedDate.getTimezoneOffset() * 60000
+  )
+
+  // Return the day of the week in UTC (0-6 where 0 is Sunday)
+  return utcEquivalentDate.getUTCDay()
+}

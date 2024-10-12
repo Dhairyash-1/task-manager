@@ -64,13 +64,13 @@ const SideBar = () => {
               alt="dark-mode"
               className="cursor-pointer"
             />
-            <Image
+            {/* <Image
               src="/arrow.png"
               width={24}
               height={24}
               alt="arrow"
               className="cursor-pointer"
-            />
+            /> */}
           </div>
           <LogoutButton type="button" variant="button" />
         </div>

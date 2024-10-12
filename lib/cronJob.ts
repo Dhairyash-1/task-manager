@@ -1,17 +1,24 @@
 import { connectDB } from "@/config"
 import Todo, { ITodo } from "@/models/todo.model"
-import { NextRequest, NextResponse } from "next/server"
+import cron from "node-cron"
+declare global {
+  var cronScheduled: boolean | undefined
+}
+// Schedule cron job when the server starts
+cron.schedule("0 0 * * *", jobFunction)
 
-export async function GET(req: NextRequest) {
+async function jobFunction() {
+  if (global.cronScheduled) {
+    console.log("Cron jobs already scheduled.")
+    return
+  }
   try {
-    connectDB()
-    console.log("started execute cron job")
+    await connectDB() // Ensure the DB connection is established
     const recurringTodos = await Todo.find({ isRecurring: true })
 
     if (!recurringTodos || recurringTodos.length === 0) {
-      return NextResponse.json({
-        message: "No recurring task present for today",
-      })
+      console.log("No recurring tasks present for today")
+      return
     }
 
     const now = new Date()
@@ -19,16 +26,11 @@ export async function GET(req: NextRequest) {
     for (const todo of recurringTodos) {
       await processRecurringTodo(todo, now)
     }
-    console.log("finish execute cron job")
+    global.cronScheduled = true
 
-    return NextResponse.json(
-      {
-        message: "Recurring tasks processed successfully",
-      },
-      { status: 200 }
-    )
+    console.log("Finished executing cron job")
   } catch (error) {
-    console.log("Error in creating recurring task", error)
+    console.log("Error in executing cron job", error)
   }
 }
 
